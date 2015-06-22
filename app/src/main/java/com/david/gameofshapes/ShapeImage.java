@@ -9,6 +9,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TableRow;
 
+import com.david.gameofshapes.Activities.GameActivity;
 import com.david.gameofshapes.Animations.DisplayNextView;
 import com.david.gameofshapes.Animations.Flip3dAnimation;
 
@@ -94,8 +95,29 @@ public class ShapeImage {
                 }
 
             }
+
+            //update the counter moves
+            updateMoves();
+
+
         }
     };
+
+    //Update the counter for moves
+    public static void updateMoves(){
+        try {
+            GameActivity.counterSem.acquire();
+
+            GameActivity.counterMoves--;
+            GameActivity.viewCounterMoves.setText(""+GameActivity.counterMoves);
+
+            GameActivity.counterSem.release();
+        }catch(InterruptedException e){
+            System.err.println("Error :" +e.getMessage());
+        }
+
+
+    }
 
     private Flip3dAnimation getRotation(float start, float end, int fromImage, int toImage, ImageButton shape) {
         // Find the center of image

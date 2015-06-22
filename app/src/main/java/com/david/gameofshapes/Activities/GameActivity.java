@@ -8,13 +8,17 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 
 import com.david.gameofshapes.Animations.Flip3dAnimation;
 import com.david.gameofshapes.R;
 import com.david.gameofshapes.ShapeImage;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 
 public class GameActivity extends Activity {
@@ -28,6 +32,10 @@ public class GameActivity extends Activity {
     private ShapeImage[][] resetImages;
     private Flip3dAnimation[][] allAnimations;
     private String level;
+
+    public static int counterMoves; //maximum number of moves the player can do
+    public static Semaphore counterSem;
+    public static TextView viewCounterMoves;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +52,12 @@ public class GameActivity extends Activity {
         copyImage(listImages,resetImages);
         allAnimations = new Flip3dAnimation[4][4];
         onAppearanceAnimations(allAnimations);
+
+        counterMoves = 20;
+        viewCounterMoves = (TextView) findViewById(R.id.counter_moves);
+        viewCounterMoves.setText(""+ counterMoves);
+        counterSem = new Semaphore(1, true);
+
     }
 
     public void buildRandomTable(ShapeImage[][] listImages, TableRow[] rows,String level){
