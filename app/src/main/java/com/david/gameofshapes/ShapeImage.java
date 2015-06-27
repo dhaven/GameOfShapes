@@ -15,6 +15,7 @@ import com.david.gameofshapes.Animations.Flip3dAnimation;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 /**
  * Created by david on 31/01/2015.
@@ -27,6 +28,8 @@ public class ShapeImage {
     private ImageButton left;
     private ImageButton right;
     private String level;
+    private static int counterMoves = 20;
+    private static Semaphore counterSem = new Semaphore(1, true);
 
     private View.OnClickListener click = new View.OnClickListener() {
         @Override
@@ -98,7 +101,8 @@ public class ShapeImage {
 
             //update the counter moves
             updateMoves();
-
+            //verify if the player hasn't lost
+            hasLost();
 
         }
     };
@@ -106,17 +110,31 @@ public class ShapeImage {
     //Update the counter for moves
     public static void updateMoves(){
         try {
-            GameActivity.counterSem.acquire();
+            counterSem.acquire();
 
-            GameActivity.counterMoves--;
-            GameActivity.viewCounterMoves.setText(""+GameActivity.counterMoves);
+            //decrease the counter
+            counterMoves--;
+            GameActivity.viewCounterMoves.setText("" + counterMoves);
 
-            GameActivity.counterSem.release();
+            counterSem.release();
         }catch(InterruptedException e){
             System.err.println("Error :" +e.getMessage());
         }
+    }
 
+    //Verify if the player has lost (counter inferior to 0)
+    public static void hasLost(){
+        try{
+            counterSem.acquire();
+            int actualCounter = counterMoves;
+            counterSem.release();
 
+            if(actualCounter <= 0){//condition for player losing
+               // GameActivity.reset(null);
+            }
+        }catch(InterruptedException e){
+            System.err.println("Error: "+ e.getMessage());
+        }
     }
 
     private Flip3dAnimation getRotation(float start, float end, int fromImage, int toImage, ImageButton shape) {
@@ -286,4 +304,5 @@ public class ShapeImage {
     public ImageButton getLeft(){
         return this.left;
     }
+    public static int getCounter(){return counterMoves;}
 }

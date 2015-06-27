@@ -33,8 +33,6 @@ public class GameActivity extends Activity {
     private Flip3dAnimation[][] allAnimations;
     private String level;
 
-    public static int counterMoves; //maximum number of moves the player can do
-    public static Semaphore counterSem;
     public static TextView viewCounterMoves;
 
     @Override
@@ -53,11 +51,8 @@ public class GameActivity extends Activity {
         allAnimations = new Flip3dAnimation[4][4];
         onAppearanceAnimations(allAnimations);
 
-        counterMoves = 20;
         viewCounterMoves = (TextView) findViewById(R.id.counter_moves);
-        viewCounterMoves.setText(""+ counterMoves);
-        counterSem = new Semaphore(1, true);
-
+        viewCounterMoves.setText(""+ ShapeImage.getCounter());
     }
 
     public void buildRandomTable(ShapeImage[][] listImages, TableRow[] rows,String level){
@@ -147,7 +142,6 @@ public class GameActivity extends Activity {
 
         }
     }
-
 
     public void reset(View view){
         copyImage(resetImages,listImages);
