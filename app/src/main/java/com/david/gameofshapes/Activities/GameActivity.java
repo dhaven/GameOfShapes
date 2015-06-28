@@ -152,6 +152,11 @@ public class GameActivity extends Activity {
     }
 
     public void reset(View view){
+       resetProc();
+    }
+
+    //Procedure when reseting the game
+    public void resetProc(){
         copyImage(resetImages,listImages);
         for(int i = 0; i < rows.length; i++){
             rows[i].removeAllViews();
@@ -165,6 +170,10 @@ public class GameActivity extends Activity {
             }
             tableLayout.addView(rows[i]);
         }
+
+        //reset the counter
+        ShapeImage.setCounter(20);
+        viewCounterMoves.setText("" + ShapeImage.getCounter());
     }
 
     public void copyImage(ShapeImage[][] in, ShapeImage[][] out){
@@ -246,13 +255,7 @@ public class GameActivity extends Activity {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            ImageView failureImage = new ImageView(context);
-                            failureImage.setImageResource(R.drawable.failure_message);
-                            failureImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                            LinearLayout container = (LinearLayout) findViewById(R.id.container);
-                            container.addView(failureImage);
-                            Animation failure_animation = AnimationUtils.loadAnimation(context, R.anim.loose_animation);
-                            failureImage.startAnimation(failure_animation);
+                            looseProcedure(context);
                         }
                     });
 
@@ -261,6 +264,21 @@ public class GameActivity extends Activity {
             }
         }).start();
 
+    }
+
+    //Procedure when the player loose
+    public void looseProcedure(Context context){
+        //Show the failure image with it's animation
+        ImageView failureImage = new ImageView(context);
+        failureImage.setImageResource(R.drawable.failure_message);
+        failureImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        LinearLayout container = (LinearLayout) findViewById(R.id.container);
+        container.addView(failureImage);
+        Animation failure_animation = AnimationUtils.loadAnimation(context, R.anim.loose_animation);
+        failureImage.startAnimation(failure_animation);
+
+        //Reset the game
+        resetProc();
     }
 
 }

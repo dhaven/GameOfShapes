@@ -307,4 +307,5 @@ public class ShapeImage {
         return this.left;
     }
     public static int getCounter(){return counterMoves;}
+    public static void setCounter(int n){counterMoves = n;}
 }
