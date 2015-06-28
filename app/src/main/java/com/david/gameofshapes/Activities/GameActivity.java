@@ -1,10 +1,13 @@
 package com.david.gameofshapes.Activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -53,6 +56,8 @@ public class GameActivity extends Activity {
 
         viewCounterMoves = (TextView) findViewById(R.id.counter_moves);
         viewCounterMoves.setText(""+ ShapeImage.getCounter());
+
+        lost();
     }
 
     public void buildRandomTable(ShapeImage[][] listImages, TableRow[] rows,String level){
@@ -218,6 +223,38 @@ public class GameActivity extends Activity {
                 }
             }
         }
+    }
+
+    //check if the player has lost the game
+    public void lost(){
+        final Context context = this;
+        final Handler handler = new Handler();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(ShapeImage.finish == false){
+                    try {
+                        Thread.sleep(250);
+                    }catch(InterruptedException e){
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                }
+                if(ShapeImage.win == false) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            ImageView failureImage = new ImageView(context);
+                            failureImage.setImageResource(R.drawable.failure_message);
+                            LinearLayout container = (LinearLayout) findViewById(R.id.container);
+                            container.addView(failureImage, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        }
+                    });
+
+
+                }
+            }
+        }).start();
+
     }
 
 }

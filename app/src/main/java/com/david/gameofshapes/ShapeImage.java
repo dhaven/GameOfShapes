@@ -30,6 +30,8 @@ public class ShapeImage {
     private String level;
     private static int counterMoves = 20;
     private static Semaphore counterSem = new Semaphore(1, true);
+    public static boolean finish = false;
+    public static boolean win = false;
 
     private View.OnClickListener click = new View.OnClickListener() {
         @Override
@@ -122,16 +124,16 @@ public class ShapeImage {
         }
     }
 
-    //Verify if the player has lost (counter inferior to 0)
+    //Return true if the player has lost (counterMoves inferior or equal to 0)
     public static void hasLost(){
         try{
             counterSem.acquire();
-            int actualCounter = counterMoves;
+            if(counterMoves <= 0){//condition for player losing
+                finish = true;
+
+            }
             counterSem.release();
 
-            if(actualCounter <= 0){//condition for player losing
-               // GameActivity.reset(null);
-            }
         }catch(InterruptedException e){
             System.err.println("Error: "+ e.getMessage());
         }
