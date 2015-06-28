@@ -2,6 +2,7 @@ package com.david.gameofshapes.Activities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Gravity;
@@ -271,14 +272,34 @@ public class GameActivity extends Activity {
         //Show the failure image with it's animation
         ImageView failureImage = new ImageView(context);
         failureImage.setImageResource(R.drawable.failure_message);
-        failureImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        LinearLayout container = (LinearLayout) findViewById(R.id.container);
-        container.addView(failureImage);
+        failureImage.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
+        TableLayout grid = (TableLayout) findViewById(R.id.grid);
+        grid.addView(failureImage);
         Animation failure_animation = AnimationUtils.loadAnimation(context, R.anim.loose_animation);
         failureImage.startAnimation(failure_animation);
 
-        //Reset the game
-        resetProc();
-    }
+        final long animationTime = failure_animation.computeDurationHint();
+        final Handler handler = new Handler();
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //Wait for the animation to end
+                try {
+                    Thread.sleep(animationTime + 500);
+                }catch(InterruptedException e){
+                    System.err.println("Error: " + e.getMessage());
+                }
+                //Reset the game
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        resetProc();
+                    }
+                });
+
+            }
+        }).start();
+
+    }
 }
