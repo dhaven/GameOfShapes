@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -57,7 +60,7 @@ public class GameActivity extends Activity {
         viewCounterMoves = (TextView) findViewById(R.id.counter_moves);
         viewCounterMoves.setText(""+ ShapeImage.getCounter());
 
-        lost();
+        lostOrWin();
     }
 
     public void buildRandomTable(ShapeImage[][] listImages, TableRow[] rows,String level){
@@ -226,7 +229,7 @@ public class GameActivity extends Activity {
     }
 
     //check if the player has lost the game
-    public void lost(){
+    public void lostOrWin(){
         final Context context = this;
         final Handler handler = new Handler();
         new Thread(new Runnable() {
@@ -245,8 +248,11 @@ public class GameActivity extends Activity {
                         public void run() {
                             ImageView failureImage = new ImageView(context);
                             failureImage.setImageResource(R.drawable.failure_message);
+                            failureImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                             LinearLayout container = (LinearLayout) findViewById(R.id.container);
-                            container.addView(failureImage, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                            container.addView(failureImage);
+                            Animation failure_animation = AnimationUtils.loadAnimation(context, R.anim.loose_animation);
+                            failureImage.startAnimation(failure_animation);
                         }
                     });
 
