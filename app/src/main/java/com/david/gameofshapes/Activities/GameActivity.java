@@ -35,7 +35,7 @@ public class GameActivity extends Activity {
     private TableLayout tableLayout;
     private LinearLayout container;
     private TableRow[] rows;
-    private ShapeImage[][] listImages;
+    private static ShapeImage[][] listImages;
     private ShapeImage[][] resetImages;
     private Flip3dAnimation[][] allAnimations;
     private String level;
@@ -60,6 +60,9 @@ public class GameActivity extends Activity {
 
         viewCounterMoves = (TextView) findViewById(R.id.counter_moves);
         viewCounterMoves.setText(""+ ShapeImage.getCounter());
+
+        int n = numberOfPentagones();
+        ShapeImage.setNumPenta(n);
 
         lostOrWin();
     }
@@ -174,6 +177,8 @@ public class GameActivity extends Activity {
 
         //reset the counter
         ShapeImage.setCounter(20);
+        ShapeImage.finish = false;
+        ShapeImage.win = false;
         viewCounterMoves.setText("" + ShapeImage.getCounter());
     }
 
@@ -259,12 +264,28 @@ public class GameActivity extends Activity {
                             looseProcedure(context);
                         }
                     });
-
-
+                }
+                else{
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            winProcedure(context);
+                        }
+                    });
                 }
             }
         }).start();
 
+    }
+
+    //Procedure when the player win
+    public void winProcedure(Context context){
+        //Show the failure image with it's animation
+        ImageView successImage = new ImageView(context);
+        successImage.setImageResource(R.drawable.success_message);
+        successImage.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
+        TableLayout grid = (TableLayout) findViewById(R.id.grid);
+        grid.addView(successImage);
     }
 
     //Procedure when the player loose
@@ -301,5 +322,18 @@ public class GameActivity extends Activity {
             }
         }).start();
 
+    }
+
+    //Return the actual number of pentagones.
+    public int numberOfPentagones(){
+        int n = 0;
+        for(int i = 0; i < listImages.length; i++){
+            for(int j = 0; j < listImages[i].length; j++){
+                if(listImages[i][j].getTag() == R.drawable.penta2){
+                    n++;
+                }
+            }
+        }
+        return n;
     }
 }

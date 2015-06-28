@@ -29,6 +29,7 @@ public class ShapeImage {
     private ImageButton right;
     private String level;
     private static int counterMoves = 20;
+    private static int numPenta = 0;
     private static Semaphore counterSem = new Semaphore(1, true);
     public static boolean finish = false;
     public static boolean win = false;
@@ -50,11 +51,13 @@ public class ShapeImage {
                     if(correspondingShapes.size() != 0) {
                         shape.startAnimation(getRotation(0,-90,R.drawable.square2,R.drawable.penta2, shape));
                     }
+                    numPenta++;
                 }else {
                     correspondingShapes = getCorrespondingShapes(R.drawable.penta2);
                     if (correspondingShapes.size() != 0) {
                         shape.startAnimation(getRotation(0,-90,R.drawable.penta2,R.drawable.triangle2, shape));
                     }
+                    numPenta--;
                 }
                 for(String parse : correspondingShapes){
                     ImageButton butt = getCorrButton(parse);
@@ -71,20 +74,24 @@ public class ShapeImage {
                     if(correspondingShapes.size() != 0) {
                         shape.startAnimation(getRotation(0,-90,R.drawable.square2,R.drawable.penta2,shape));
                     }
+                    numPenta++;
                 }
                 if(correspondingShapes.size() != 0) {
                     for (String parse : correspondingShapes) {
                         ImageButton butt = getCorrButton(parse);
                         butt.startAnimation(getRotation(0,-90,(Integer)butt.getTag(), getNextTag(butt),butt));
                     }
+                    numPenta--;
                 }
             }else{
                 if(tag == R.drawable.triangle2) {
                     shape.startAnimation(getRotation(0,-90,R.drawable.triangle2,R.drawable.square2,shape));
                 }else if(tag == R.drawable.square2){
                     shape.startAnimation(getRotation(0,-90,R.drawable.square2,R.drawable.penta2,shape));
+                    numPenta++;
                 }else{
                     shape.startAnimation(getRotation(0,-90,R.drawable.penta2,R.drawable.triangle2,shape));
+                    numPenta--;
                 }
                 if(up != null){
                     up.startAnimation(getRotation(0,-90,(Integer)up.getTag(), getNextTag(up),up));
@@ -104,7 +111,9 @@ public class ShapeImage {
             //update the counter moves
             updateMoves();
             //verify if the player hasn't lost
+            hasWin();
             hasLost();
+
 
         }
     };
@@ -126,16 +135,28 @@ public class ShapeImage {
 
     //Return true if the player has lost (counterMoves inferior or equal to 0)
     public static void hasLost(){
-        try{
-            counterSem.acquire();
-            if(counterMoves <= 0){//condition for player losing
-                finish = true;
+        if(finish == false) {
+            try {
+                counterSem.acquire();
+                if (counterMoves <= 0) {//condition for player losing
+                    finish = true;
 
+                }
+                counterSem.release();
+
+            } catch (InterruptedException e) {
+                System.err.println("Error: " + e.getMessage());
             }
-            counterSem.release();
+        }
+    }
 
-        }catch(InterruptedException e){
-            System.err.println("Error: "+ e.getMessage());
+    public static void hasWin(){
+        System.out.println("Number of pentagones:" + numPenta);
+        if (finish == false){
+            if (numPenta == 16){
+                finish = true;
+                win = true;
+            }
         }
     }
 
@@ -236,8 +257,10 @@ public class ShapeImage {
         if(((Integer)img.getTag()).intValue() == R.drawable.triangle2){
             return R.drawable.square2;
         }else if(((Integer)img.getTag()).intValue() == R.drawable.square2){
+            numPenta++;
             return R.drawable.penta2;
         }else{
+            numPenta--;
             return R.drawable.triangle2;
         }
     }
@@ -308,4 +331,6 @@ public class ShapeImage {
     }
     public static int getCounter(){return counterMoves;}
     public static void setCounter(int n){counterMoves = n;}
+    public static void setNumPenta(int n){numPenta = n;}
+    public  int getTag(){return ((Integer)shape.getTag()).intValue();}
 }
