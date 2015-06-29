@@ -97,6 +97,55 @@ public class GameActivity extends Activity {
         }
     }
 
+    //Switch a puzzle
+    public void switchPuzzle(){
+        long delay = 0;
+        int h = tableLayout.getHeight();
+        int w = tableLayout.getWidth();
+        tableLayout.setMinimumHeight(h);
+        tableLayout.setMinimumWidth(w);
+
+        for(int i = 0; i < listImages.length; i++){
+            for(int j = 0; j < listImages[i].length; j++){
+                Animation disappearAnimation = AnimationUtils.loadAnimation(this, R.anim.disappearance_animation);
+                final int a = i;
+                final int b = j;
+                disappearAnimation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {}
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        Handler handler = new Handler();
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                listImages[a][b].getImage().setAlpha(0f);
+                                if(a == listImages.length-1 && b == listImages[a].length-1){
+                                    for(int i = 0; i < listImages.length; i++) {
+                                        for (int j = 0; j < listImages[i].length; j++) {
+                                            rows[i].removeView(listImages[i][j].getImage());
+                                        }
+                                    }
+                                    buildSolvableTable(listImages,rows,level,4);
+                                    onAppearanceAnimations(allAnimations);
+                                }
+                            }
+                        });
+
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {}
+                });
+                disappearAnimation.setStartOffset(delay);
+                listImages[i][j].getImage().startAnimation(disappearAnimation);
+                delay += 150;
+            }
+        }
+    }
+
     public void buildSolvableTable(ShapeImage[][] listImages, TableRow[] rows,String level, int numMoves){
         for(int i = 0; i < listImages.length;i++) {
             rows[i] = new TableRow(this);
@@ -156,7 +205,7 @@ public class GameActivity extends Activity {
     }
 
     public void reset(View view){
-       resetProc();
+        resetProc();
     }
 
     //Procedure when reseting the game
@@ -282,7 +331,7 @@ public class GameActivity extends Activity {
     //Procedure when the player win
     public void winProcedure(Context context){
         //Show the failure image with it's animation
-        ImageView successImage = new ImageView(context);
+        final ImageView successImage = new ImageView(context);
         successImage.setImageResource(R.drawable.success_message);
         successImage.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
         TableLayout grid = (TableLayout) findViewById(R.id.grid);
@@ -293,17 +342,18 @@ public class GameActivity extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                //Wait for the animation to end
                 try {
                     Thread.sleep(1000);
                 }catch(InterruptedException e){
                     System.err.println("Error: " + e.getMessage());
                 }
-                //Reset the game
+                //Launch the next puzzle
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        //change level
+                        tableLayout.removeView(successImage);
+                        switchPuzzle();
+
                     }
                 });
 

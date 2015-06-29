@@ -151,7 +151,6 @@ public class ShapeImage {
     }
 
     public static void hasWin(){
-        System.out.println("Number of pentagones:" + numPenta);
         if (finish == false){
             if (numPenta == 16){
                 finish = true;
