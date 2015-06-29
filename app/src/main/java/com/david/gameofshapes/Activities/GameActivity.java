@@ -179,6 +179,7 @@ public class GameActivity extends Activity {
         ShapeImage.setCounter(20);
         ShapeImage.finish = false;
         ShapeImage.win = false;
+        ShapeImage.setNumPenta(numberOfPentagones());
         viewCounterMoves.setText("" + ShapeImage.getCounter());
     }
 
@@ -286,6 +287,28 @@ public class GameActivity extends Activity {
         successImage.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
         TableLayout grid = (TableLayout) findViewById(R.id.grid);
         grid.addView(successImage);
+
+        final Handler handler = new Handler();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //Wait for the animation to end
+                try {
+                    Thread.sleep(1000);
+                }catch(InterruptedException e){
+                    System.err.println("Error: " + e.getMessage());
+                }
+                //Reset the game
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        //change level
+                    }
+                });
+
+            }
+        }).start();
     }
 
     //Procedure when the player loose
