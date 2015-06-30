@@ -1,5 +1,6 @@
 package com.david.gameofshapes.Activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
@@ -19,13 +20,13 @@ import com.david.gameofshapes.R;
 import java.util.ArrayList;
 
 
-public class PuzzleSelectionActivity extends ActionBarActivity {
+public class PuzzleSelectionActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_puzzle_selection);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         ShapesDbHelper myDbHelper = new ShapesDbHelper(this);
         SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
         ArrayList<Puzzle> allPuzzles = DbContract.PuzzlesTable.getAllPuzzles(myDb);

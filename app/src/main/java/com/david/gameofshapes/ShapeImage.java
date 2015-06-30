@@ -40,22 +40,22 @@ public class ShapeImage {
             ImageButton shape = (ImageButton) v;
             ArrayList<String> correspondingShapes = new ArrayList<String>();
             int tag = ((Integer)shape.getTag()).intValue();
-            if(level.equals("easy")){
-                if(tag == R.drawable.triangle2) {
-                    correspondingShapes = getCorrespondingShapes(R.drawable.triangle2);
+            if(level.equals("easy")){ //old
+                if(tag == R.drawable.triangle_wood) {
+                    correspondingShapes = getCorrespondingShapes(R.drawable.triangle_wood);
                     if (correspondingShapes.size() != 0) {
-                        shape.startAnimation(getRotation(0,-90,R.drawable.triangle2,R.drawable.square2, shape));
+                        shape.startAnimation(getRotation(0,-90,R.drawable.triangle_wood,R.drawable.square_wood, shape));
                     }
-                }else if(tag == R.drawable.square2){
-                    correspondingShapes = getCorrespondingShapes(R.drawable.square2);
+                }else if(tag == R.drawable.square_wood){
+                    correspondingShapes = getCorrespondingShapes(R.drawable.square_wood);
                     if(correspondingShapes.size() != 0) {
-                        shape.startAnimation(getRotation(0,-90,R.drawable.square2,R.drawable.penta2, shape));
+                        shape.startAnimation(getRotation(0,-90,R.drawable.square_wood,R.drawable.penta_wood, shape));
                     }
                     numPenta++;
                 }else {
-                    correspondingShapes = getCorrespondingShapes(R.drawable.penta2);
+                    correspondingShapes = getCorrespondingShapes(R.drawable.penta_wood);
                     if (correspondingShapes.size() != 0) {
-                        shape.startAnimation(getRotation(0,-90,R.drawable.penta2,R.drawable.triangle2, shape));
+                        shape.startAnimation(getRotation(0,-90,R.drawable.penta_wood,R.drawable.triangle_wood, shape));
                     }
                     numPenta--;
                 }
@@ -63,16 +63,16 @@ public class ShapeImage {
                     ImageButton butt = getCorrButton(parse);
                     butt.startAnimation(getRotation(0,-90,(Integer)butt.getTag(), getNextTag(butt),butt));
                 }
-            }else if(level.equals("medium")){
-                if(tag == R.drawable.triangle2) {
-                    correspondingShapes = getCorrespondingShapes(R.drawable.triangle2);
+            }else if(level.equals("medium")){ //old
+                if(tag == R.drawable.triangle_wood) {
+                    correspondingShapes = getCorrespondingShapes(R.drawable.triangle_wood);
                     if (correspondingShapes.size() != 0) {
-                        shape.startAnimation(getRotation(0,-90,R.drawable.triangle2,R.drawable.square2,shape));
+                        shape.startAnimation(getRotation(0,-90,R.drawable.triangle_wood,R.drawable.square_wood,shape));
                     }
-                }else if(tag == R.drawable.square2){
-                    correspondingShapes = getCorrespondingShapes(R.drawable.square2);
+                }else if(tag == R.drawable.square_wood){
+                    correspondingShapes = getCorrespondingShapes(R.drawable.square_wood);
                     if(correspondingShapes.size() != 0) {
-                        shape.startAnimation(getRotation(0,-90,R.drawable.square2,R.drawable.penta2,shape));
+                        shape.startAnimation(getRotation(0,-90,R.drawable.square_wood,R.drawable.penta_wood,shape));
                     }
                     numPenta++;
                 }
@@ -84,13 +84,13 @@ public class ShapeImage {
                     numPenta--;
                 }
             }else{
-                if(tag == R.drawable.triangle2) {
-                    shape.startAnimation(getRotation(0,-90,R.drawable.triangle2,R.drawable.square2,shape));
-                }else if(tag == R.drawable.square2){
-                    shape.startAnimation(getRotation(0,-90,R.drawable.square2,R.drawable.penta2,shape));
+                if(tag == R.drawable.triangle_wood) {
+                    shape.startAnimation(getRotation(0,-90,R.drawable.triangle_wood,R.drawable.square_wood,shape));
+                }else if(tag == R.drawable.square_wood){
+                    shape.startAnimation(getRotation(0,-90,R.drawable.square_wood,R.drawable.penta_wood,shape));
                     numPenta++;
                 }else{
-                    shape.startAnimation(getRotation(0,-90,R.drawable.penta2,R.drawable.triangle2,shape));
+                    shape.startAnimation(getRotation(0,-90,R.drawable.penta_wood,R.drawable.triangle_wood,shape));
                     numPenta--;
                 }
                 if(up != null){
@@ -179,14 +179,14 @@ public class ShapeImage {
         this.shape.setLayoutParams(new TableRow.LayoutParams(convertDpToPx(85,(Activity)context),convertDpToPx(85,(Activity)context)));
         if(shape != null){
             if(shape.equals("triangle")){
-                this.shape.setImageResource(R.drawable.triangle2);
-                this.shape.setTag(R.drawable.triangle2);
+                this.shape.setImageResource(R.drawable.triangle_wood);
+                this.shape.setTag(R.drawable.triangle_wood);
             }else if(shape.equals("square")){
-                this.shape.setImageResource(R.drawable.square2);
-                this.shape.setTag(R.drawable.square2);
+                this.shape.setImageResource(R.drawable.square_wood);
+                this.shape.setTag(R.drawable.square_wood);
             }else if(shape.equals("penta")){
-                this.shape.setImageResource(R.drawable.penta2);
-                this.shape.setTag(R.drawable.penta2);
+                this.shape.setImageResource(R.drawable.penta_wood);
+                this.shape.setTag(R.drawable.penta_wood);
             }else {
                 System.err.print("wrong number generated");
             }
@@ -194,14 +194,14 @@ public class ShapeImage {
             Random random = new Random();
             int num = random.nextInt(3);
             if(num == 0){
-                this.shape.setImageResource(R.drawable.triangle2);
-                this.shape.setTag(R.drawable.triangle2);
+                this.shape.setImageResource(R.drawable.triangle_wood);
+                this.shape.setTag(R.drawable.triangle_wood);
             }else if(num == 1){
-                this.shape.setImageResource(R.drawable.square2);
-                this.shape.setTag(R.drawable.square2);
+                this.shape.setImageResource(R.drawable.square_wood);
+                this.shape.setTag(R.drawable.square_wood);
             }else if(num == 2){
-                this.shape.setImageResource(R.drawable.penta2);
-                this.shape.setTag(R.drawable.penta2);
+                this.shape.setImageResource(R.drawable.penta_wood);
+                this.shape.setTag(R.drawable.penta_wood);
             }else {
                 System.err.print("wrong number generated");
             }
@@ -240,57 +240,57 @@ public class ShapeImage {
     }
 
     public int setNextTag(ImageButton img){
-        if(((Integer)img.getTag()).intValue() == R.drawable.triangle2){
-            img.setTag(R.drawable.square2);
-            return R.drawable.square2;
-        }else if(((Integer)img.getTag()).intValue() == R.drawable.square2){
-            img.setTag(R.drawable.penta2);
-            return R.drawable.penta2;
+        if(((Integer)img.getTag()).intValue() == R.drawable.triangle_wood){
+            img.setTag(R.drawable.square_wood);
+            return R.drawable.square_wood;
+        }else if(((Integer)img.getTag()).intValue() == R.drawable.square_wood){
+            img.setTag(R.drawable.penta_wood);
+            return R.drawable.penta_wood;
         }else{
-            img.setTag(R.drawable.triangle2);
-            return R.drawable.triangle2;
+            img.setTag(R.drawable.triangle_wood);
+            return R.drawable.triangle_wood;
         }
     }
 
     public int getNextTag(ImageButton img){
-        if(((Integer)img.getTag()).intValue() == R.drawable.triangle2){
-            return R.drawable.square2;
-        }else if(((Integer)img.getTag()).intValue() == R.drawable.square2){
+        if(((Integer)img.getTag()).intValue() == R.drawable.triangle_wood){
+            return R.drawable.square_wood;
+        }else if(((Integer)img.getTag()).intValue() == R.drawable.square_wood){
             numPenta++;
-            return R.drawable.penta2;
+            return R.drawable.penta_wood;
         }else{
             numPenta--;
-            return R.drawable.triangle2;
+            return R.drawable.triangle_wood;
         }
     }
 
     public int setPreviousTag(ImageButton img){
-        if(((Integer)img.getTag()).intValue() == R.drawable.penta2){
-            img.setTag(R.drawable.square2);
-            return R.drawable.square2;
-        }else if(((Integer)img.getTag()).intValue() == R.drawable.square2){
-            img.setTag(R.drawable.triangle2);
-            return R.drawable.triangle2;
+        if(((Integer)img.getTag()).intValue() == R.drawable.penta_wood){
+            img.setTag(R.drawable.square_wood);
+            return R.drawable.square_wood;
+        }else if(((Integer)img.getTag()).intValue() == R.drawable.square_wood){
+            img.setTag(R.drawable.triangle_wood);
+            return R.drawable.triangle_wood;
         }else{
-            img.setTag(R.drawable.penta2);
-            return R.drawable.penta2;
+            img.setTag(R.drawable.penta_wood);
+            return R.drawable.penta_wood;
         }
     }
 
     public void setCorrImage(ImageButton img){
-        if(((Integer)img.getTag()).intValue() == R.drawable.penta2){
-            img.setImageResource(R.drawable.penta2);
-        }else if(((Integer)img.getTag()).intValue() == R.drawable.square2){
-            img.setImageResource(R.drawable.square2);
+        if(((Integer)img.getTag()).intValue() == R.drawable.penta_wood){
+            img.setImageResource(R.drawable.penta_wood);
+        }else if(((Integer)img.getTag()).intValue() == R.drawable.square_wood){
+            img.setImageResource(R.drawable.square_wood);
         }else{
-            img.setImageResource(R.drawable.triangle2);
+            img.setImageResource(R.drawable.triangle_wood);
         }
     }
 
     public String imgToString(ImageButton img){
-        if(((Integer)img.getTag()).intValue() == R.drawable.penta2){
+        if(((Integer)img.getTag()).intValue() == R.drawable.penta_wood){
             return "penta";
-        }else if(((Integer)img.getTag()).intValue() == R.drawable.square2){
+        }else if(((Integer)img.getTag()).intValue() == R.drawable.square_wood){
             return "square";
         }else{
             return "triangle";

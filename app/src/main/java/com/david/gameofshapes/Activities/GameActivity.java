@@ -2,10 +2,8 @@ package com.david.gameofshapes.Activities;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
@@ -21,11 +19,8 @@ import com.david.gameofshapes.Animations.Flip3dAnimation;
 import com.david.gameofshapes.R;
 import com.david.gameofshapes.ShapeImage;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.Semaphore;
 
 
 public class GameActivity extends Activity {
@@ -112,7 +107,8 @@ public class GameActivity extends Activity {
                 final int b = j;
                 disappearAnimation.setAnimationListener(new Animation.AnimationListener() {
                     @Override
-                    public void onAnimationStart(Animation animation) {}
+                    public void onAnimationStart(Animation animation) {
+                    }
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
@@ -121,13 +117,13 @@ public class GameActivity extends Activity {
                             @Override
                             public void run() {
                                 listImages[a][b].getImage().setAlpha(0f);
-                                if(a == listImages.length-1 && b == listImages[a].length-1){
-                                    for(int i = 0; i < listImages.length; i++) {
+                                if (a == listImages.length - 1 && b == listImages[a].length - 1) {
+                                    for (int i = 0; i < listImages.length; i++) {
                                         for (int j = 0; j < listImages[i].length; j++) {
                                             rows[i].removeView(listImages[i][j].getImage());
                                         }
                                     }
-                                    buildSolvableTable(listImages,rows,level,4);
+                                    buildSolvableTable(listImages, rows, level, 4);
                                     onAppearanceAnimations(allAnimations);
                                 }
                             }
@@ -137,7 +133,8 @@ public class GameActivity extends Activity {
                     }
 
                     @Override
-                    public void onAnimationRepeat(Animation animation) {}
+                    public void onAnimationRepeat(Animation animation) {
+                    }
                 });
                 disappearAnimation.setStartOffset(delay);
                 listImages[i][j].getImage().startAnimation(disappearAnimation);
@@ -166,7 +163,7 @@ public class GameActivity extends Activity {
                     int posX = random.nextInt(listImages.length);
                     int posY = random.nextInt(listImages[0].length);
                     currImage = listImages[posX][posY];
-                    if(((Integer) currImage.getImage().getTag()).intValue() != R.drawable.triangle2){
+                    if(((Integer) currImage.getImage().getTag()).intValue() != R.drawable.triangle_wood){
                         adj = currImage.getCorrespondingShapes(((Integer) currImage.getImage().getTag()).intValue());
                     }
                 }
@@ -402,7 +399,7 @@ public class GameActivity extends Activity {
         int n = 0;
         for(int i = 0; i < listImages.length; i++){
             for(int j = 0; j < listImages[i].length; j++){
-                if(listImages[i][j].getTag() == R.drawable.penta2){
+                if(listImages[i][j].getTag() == R.drawable.penta_wood){
                     n++;
                 }
             }
