@@ -18,7 +18,8 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="puzzles"
+        android:text="PUZZLES"
+        android:textSize="30sp"
         android:id="@+id/puzzles"
         android:layout_marginBottom="48dp"
         android:layout_above="@+id/button2"
@@ -28,7 +29,8 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="speedrun"
+        android:text="SPEED RUN"
+        android:textSize="30sp"
         android:id="@+id/button2"
         android:layout_centerVertical="true"
         android:layout_alignLeft="@+id/puzzles"
@@ -38,7 +40,8 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="stats"
+        android:text="STATS"
+        android:textSize="30sp"
         android:id="@+id/button3"
         android:layout_below="@+id/button2"
         android:layout_alignLeft="@+id/button2"
