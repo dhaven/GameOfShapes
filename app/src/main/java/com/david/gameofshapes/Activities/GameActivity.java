@@ -14,8 +14,10 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.david.gameofshapes.Animations.Flip3dAnimation;
+import com.david.gameofshapes.Puzzle;
 import com.david.gameofshapes.R;
 import com.david.gameofshapes.ShapeImage;
 
@@ -33,7 +35,8 @@ public class GameActivity extends Activity {
     private static ShapeImage[][] listImages;
     private ShapeImage[][] resetImages;
     private Flip3dAnimation[][] allAnimations;
-    private String level;
+    private int puzzleId;
+    //private String level;
 
     public static TextView viewCounterMoves;
 
@@ -43,11 +46,12 @@ public class GameActivity extends Activity {
         setContentView(R.layout.gamelayout);
         tableLayout = (TableLayout) findViewById(R.id.grid);
         container = (LinearLayout) findViewById(R.id.container);
-        level = getIntent().getStringExtra("menulayout");
+        //level = getIntent().getStringExtra("menulayout");
+        puzzleId = getIntent().getIntExtra("puzzleId",-1);
         listImages = new ShapeImage[4][4];
         rows = new TableRow[4];
-        //buildRandomTable(listImages,rows,level);
-        buildSolvableTable(listImages,rows,level,4);
+        buildSpecificTable(listImages,rows,PuzzleSelectionActivity.puzzleList.get(puzzleId));
+        //buildSolvableTable(listImages,rows,4);
         resetImages = new ShapeImage[4][4];
         copyImage(listImages,resetImages);
         allAnimations = new Flip3dAnimation[4][4];
@@ -61,13 +65,13 @@ public class GameActivity extends Activity {
 
         lostOrWin();
     }
-
+    //old
     public void buildRandomTable(ShapeImage[][] listImages, TableRow[] rows,String level){
         for(int i = 0; i < listImages.length;i++) {
             rows[i] = new TableRow(this);
             rows[i].setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
             for (int j = 0; j < listImages[0].length; j++) {
-                listImages[i][j] = new ShapeImage(this,level,null);
+                listImages[i][j] = new ShapeImage(this,null);
                 rows[i].addView(listImages[i][j].getImage());
             }
             tableLayout.addView(rows[i]);
@@ -123,7 +127,7 @@ public class GameActivity extends Activity {
                                             rows[i].removeView(listImages[i][j].getImage());
                                         }
                                     }
-                                    buildSolvableTable(listImages, rows, level, 4);
+                                    buildSolvableTable(listImages, rows, 4);
                                     onAppearanceAnimations(allAnimations);
                                 }
                             }
@@ -143,12 +147,13 @@ public class GameActivity extends Activity {
         }
     }
 
-    public void buildSolvableTable(ShapeImage[][] listImages, TableRow[] rows,String level, int numMoves){
+    //to keep for speedrun
+    public void buildSolvableTable(ShapeImage[][] listImages, TableRow[] rows, int numMoves){
         for(int i = 0; i < listImages.length;i++) {
             rows[i] = new TableRow(this);
             rows[i].setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
             for (int j = 0; j < listImages[0].length; j++) {
-                listImages[i][j] = new ShapeImage(this,level,"penta");
+                listImages[i][j] = new ShapeImage(this,"penta");
                 rows[i].addView(listImages[i][j].getImage());
             }
             tableLayout.addView(rows[i]);
@@ -158,47 +163,53 @@ public class GameActivity extends Activity {
         ShapeImage currImage = null;
         ArrayList<String> adj = new ArrayList<String>();
         for(int i = 0; i < numMoves; i++){
-            if(level.equals("medium")){
-                while(adj.size() == 0) {
-                    int posX = random.nextInt(listImages.length);
-                    int posY = random.nextInt(listImages[0].length);
-                    currImage = listImages[posX][posY];
-                    if(((Integer) currImage.getImage().getTag()).intValue() != R.drawable.triangle_wood){
-                        adj = currImage.getCorrespondingShapes(((Integer) currImage.getImage().getTag()).intValue());
-                    }
-                }
-                currImage.setPreviousTag(currImage.getImage());
-                currImage.setCorrImage(currImage.getImage());
-                for(String parse : adj){
-                    currImage.setPreviousTag(currImage.getCorrButton(parse));
-                    currImage.setCorrImage(currImage.getCorrButton(parse));
-                }
-                adj = new ArrayList<String>();
-            }else{ //level.equals("hard")
-                int posX = random.nextInt(listImages.length);
-                int posY = random.nextInt(listImages[0].length);
-                currImage = listImages[posX][posY];
-                currImage.setPreviousTag(currImage.getImage());
-                currImage.setCorrImage(currImage.getImage());
-                if(currImage.getUp()!=null){
-                    currImage.setPreviousTag(currImage.getUp());
-                    currImage.setCorrImage(currImage.getUp());
-                }
-                if(currImage.getRight() != null){
-                    currImage.setPreviousTag(currImage.getRight());
-                    currImage.setCorrImage(currImage.getRight());
-                }
-                if(currImage.getDown() != null){
-                    currImage.setPreviousTag(currImage.getDown());
-                    currImage.setCorrImage(currImage.getDown());
-                }
-                if(currImage.getLeft() !=  null){
-                    currImage.setPreviousTag(currImage.getLeft());
-                    currImage.setCorrImage(currImage.getLeft());
-                }
+            int posX = random.nextInt(listImages.length);
+            int posY = random.nextInt(listImages[0].length);
+            currImage = listImages[posX][posY];
+            currImage.setPreviousTag(currImage.getImage());
+            currImage.setCorrImage(currImage.getImage());
+            if(currImage.getUp()!=null){
+                currImage.setPreviousTag(currImage.getUp());
+                currImage.setCorrImage(currImage.getUp());
+            }
+            if(currImage.getRight() != null){
+                currImage.setPreviousTag(currImage.getRight());
+                currImage.setCorrImage(currImage.getRight());
+            }
+            if(currImage.getDown() != null){
+                currImage.setPreviousTag(currImage.getDown());
+                currImage.setCorrImage(currImage.getDown());
+            }
+            if(currImage.getLeft() !=  null){
+                currImage.setPreviousTag(currImage.getLeft());
+                currImage.setCorrImage(currImage.getLeft());
             }
 
         }
+    }
+    public void buildSpecificTable(ShapeImage[][] listImages, TableRow[] rows, Puzzle puzzle){
+        String[] labels = puzzle.getConfig().split(",");
+        //Toast.makeText(this,labels.toString(), Toast.LENGTH_LONG).show();
+        int level = 0;
+        for(int i = 0; i < listImages.length;i++) {
+            rows[i] = new TableRow(this);
+            rows[i].setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
+            for (int j = 0; j < listImages[0].length; j++) {
+                if(labels[j + level].equals("T")){
+                    listImages[i][j] = new ShapeImage(this,"triangle");
+                    rows[i].addView(listImages[i][j].getImage());
+                }else if(labels[j + level].equals("C")){
+                    listImages[i][j] = new ShapeImage(this,"square");
+                    rows[i].addView(listImages[i][j].getImage());
+                }else{
+                    listImages[i][j] = new ShapeImage(this,"penta");
+                    rows[i].addView(listImages[i][j].getImage());
+                }
+            }
+            tableLayout.addView(rows[i]);
+            level+=4;
+        }
+        setAdjacency(listImages);
     }
 
     public void reset(View view){
@@ -232,7 +243,7 @@ public class GameActivity extends Activity {
     public void copyImage(ShapeImage[][] in, ShapeImage[][] out){
         for(int i = 0; i < in.length; i++){
             for(int j = 0; j < in[0].length; j++){
-                out[i][j] = new ShapeImage(this,level,in[i][j].imgToString(in[i][j].getImage()));
+                out[i][j] = new ShapeImage(this,in[i][j].imgToString(in[i][j].getImage()));
             }
         }
         setAdjacency(out);

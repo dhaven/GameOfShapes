@@ -1,22 +1,37 @@
 package com.david.gameofshapes.Activities;
 
 import android.app.Activity;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.david.gameofshapes.Database.DbContract;
+import com.david.gameofshapes.Database.ShapesDbHelper;
+import com.david.gameofshapes.Puzzle;
 import com.david.gameofshapes.R;
 
+import java.util.ArrayList;
 
-public class MenuActivity extends Activity {
+
+public class MenuActivity extends Activity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.menulayout);
+        if(PuzzleSelectionActivity.puzzleList == null){
+            new LoadDataTask().execute(null,null);
+        }
     }
 
     @Override
@@ -56,6 +71,21 @@ public class MenuActivity extends Activity {
         Todo
         speedrun mode, how many puzzles can you solve in 60 seconds ?
          */
+    }
+
+    private class LoadDataTask extends AsyncTask<String,Void,ArrayList<Puzzle>> {
+
+
+        @Override
+        protected ArrayList<Puzzle> doInBackground(String... params) {
+            ShapesDbHelper myDbHelper = new ShapesDbHelper(getApplicationContext());
+            SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
+            //myDbHelper.onUpgrade(myDb,1,2);
+            return DbContract.PuzzlesTable.getAllPuzzles(myDb);
+        }
+        protected void onPostExecute(ArrayList<Puzzle> result) {
+            PuzzleSelectionActivity.puzzleList = result;
+        }
     }
     public void onClick(View view){ //old
         Button thisButton = (Button) view;

@@ -65,7 +65,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@drawable/level">
+        android:background="@drawable/level"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp">
 
         <ImageView
             android:layout_width="90dp"

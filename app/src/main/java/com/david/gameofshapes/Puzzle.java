@@ -11,13 +11,15 @@ public class Puzzle {
     private int puzzle_id;
     private String difficulty;
     private int num_moves;
+    private String config;
     private int size;
     private int solved;
 
-    public Puzzle(int puzzle_id, String difficulty, int num_moves, int size, int solved){
+    public Puzzle(int puzzle_id, String difficulty, int num_moves, String config, int size, int solved){
         this.puzzle_id = puzzle_id;
         this.difficulty = difficulty;
         this.num_moves = num_moves;
+        this.config = config;
         this.size = size;
         this.solved = solved;
     }
@@ -37,4 +39,5 @@ public class Puzzle {
     public int getSolved(){
         return this.solved;
     }
+    public String getConfig(){ return this.config; }
 }

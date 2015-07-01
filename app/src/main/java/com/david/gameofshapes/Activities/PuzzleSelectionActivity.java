@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.david.gameofshapes.Database.DbContract;
 import com.david.gameofshapes.Database.ShapesDbHelper;
@@ -22,21 +23,24 @@ import java.util.ArrayList;
 
 public class PuzzleSelectionActivity extends Activity {
 
+    public static ArrayList<Puzzle> puzzleList;
+    public static ImageAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_puzzle_selection);
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        ShapesDbHelper myDbHelper = new ShapesDbHelper(this);
-        SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
-        ArrayList<Puzzle> allPuzzles = DbContract.PuzzlesTable.getAllPuzzles(myDb);
         GridView grid = (GridView) findViewById(R.id.grid);
-        grid.setAdapter(new ImageAdapter(this,allPuzzles));
+        adapter = new ImageAdapter(this,puzzleList);
+        grid.setAdapter(adapter);
+        //Toast.makeText(this, puzzleList.get(0).getConfig().toString(),Toast.LENGTH_LONG).show();
         grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(view.getContext(),GameActivity.class);
-                intent.putExtra("menulayout","hard");
+                //Toast.makeText(view.getContext(),""+position, Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(view.getContext(), GameActivity.class);
+                //intent.putExtra("menulayout","hard");
+                intent.putExtra("puzzleId", position);
                 startActivity(intent);
             }
         });
@@ -48,6 +52,12 @@ public class PuzzleSelectionActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.menu_puzzle_selection, menu);
         return true;
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        adapter.notifyDataSetChanged();
     }
 
     @Override

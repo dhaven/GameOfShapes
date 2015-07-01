@@ -27,7 +27,6 @@ public class ShapeImage {
     private ImageButton down;
     private ImageButton left;
     private ImageButton right;
-    private String level;
     private static int counterMoves = 20;
     private static int numPenta = 0;
     private static Semaphore counterSem = new Semaphore(1, true);
@@ -40,72 +39,26 @@ public class ShapeImage {
             ImageButton shape = (ImageButton) v;
             ArrayList<String> correspondingShapes = new ArrayList<String>();
             int tag = ((Integer)shape.getTag()).intValue();
-            if(level.equals("easy")){ //old
-                if(tag == R.drawable.triangle_wood) {
-                    correspondingShapes = getCorrespondingShapes(R.drawable.triangle_wood);
-                    if (correspondingShapes.size() != 0) {
-                        shape.startAnimation(getRotation(0,-90,R.drawable.triangle_wood,R.drawable.square_wood, shape));
-                    }
-                }else if(tag == R.drawable.square_wood){
-                    correspondingShapes = getCorrespondingShapes(R.drawable.square_wood);
-                    if(correspondingShapes.size() != 0) {
-                        shape.startAnimation(getRotation(0,-90,R.drawable.square_wood,R.drawable.penta_wood, shape));
-                    }
-                    numPenta++;
-                }else {
-                    correspondingShapes = getCorrespondingShapes(R.drawable.penta_wood);
-                    if (correspondingShapes.size() != 0) {
-                        shape.startAnimation(getRotation(0,-90,R.drawable.penta_wood,R.drawable.triangle_wood, shape));
-                    }
-                    numPenta--;
-                }
-                for(String parse : correspondingShapes){
-                    ImageButton butt = getCorrButton(parse);
-                    butt.startAnimation(getRotation(0,-90,(Integer)butt.getTag(), getNextTag(butt),butt));
-                }
-            }else if(level.equals("medium")){ //old
-                if(tag == R.drawable.triangle_wood) {
-                    correspondingShapes = getCorrespondingShapes(R.drawable.triangle_wood);
-                    if (correspondingShapes.size() != 0) {
-                        shape.startAnimation(getRotation(0,-90,R.drawable.triangle_wood,R.drawable.square_wood,shape));
-                    }
-                }else if(tag == R.drawable.square_wood){
-                    correspondingShapes = getCorrespondingShapes(R.drawable.square_wood);
-                    if(correspondingShapes.size() != 0) {
-                        shape.startAnimation(getRotation(0,-90,R.drawable.square_wood,R.drawable.penta_wood,shape));
-                    }
-                    numPenta++;
-                }
-                if(correspondingShapes.size() != 0) {
-                    for (String parse : correspondingShapes) {
-                        ImageButton butt = getCorrButton(parse);
-                        butt.startAnimation(getRotation(0,-90,(Integer)butt.getTag(), getNextTag(butt),butt));
-                    }
-                    numPenta--;
-                }
+            if(tag == R.drawable.triangle_wood) {
+                shape.startAnimation(getRotation(0,-90,R.drawable.triangle_wood,R.drawable.square_wood,shape));
+            }else if(tag == R.drawable.square_wood){
+                shape.startAnimation(getRotation(0,-90,R.drawable.square_wood,R.drawable.penta_wood,shape));
+                numPenta++;
             }else{
-                if(tag == R.drawable.triangle_wood) {
-                    shape.startAnimation(getRotation(0,-90,R.drawable.triangle_wood,R.drawable.square_wood,shape));
-                }else if(tag == R.drawable.square_wood){
-                    shape.startAnimation(getRotation(0,-90,R.drawable.square_wood,R.drawable.penta_wood,shape));
-                    numPenta++;
-                }else{
-                    shape.startAnimation(getRotation(0,-90,R.drawable.penta_wood,R.drawable.triangle_wood,shape));
-                    numPenta--;
-                }
-                if(up != null){
-                    up.startAnimation(getRotation(0,-90,(Integer)up.getTag(), getNextTag(up),up));
-                }
-                if(right != null){
-                    right.startAnimation(getRotation(0,-90,(Integer)right.getTag(), getNextTag(right),right));
-                }
-                if(down != null){
-                    down.startAnimation(getRotation(0,-90,(Integer)down.getTag(), getNextTag(down),down));
-                }
-                if(left != null){
-                    left.startAnimation(getRotation(0,-90,(Integer)left.getTag(), getNextTag(left),left));
-                }
-
+                shape.startAnimation(getRotation(0,-90,R.drawable.penta_wood,R.drawable.triangle_wood,shape));
+                numPenta--;
+            }
+            if(up != null){
+                up.startAnimation(getRotation(0,-90,(Integer)up.getTag(), getNextTag(up),up));
+            }
+            if(right != null){
+                right.startAnimation(getRotation(0,-90,(Integer)right.getTag(), getNextTag(right),right));
+            }
+            if(down != null){
+                down.startAnimation(getRotation(0,-90,(Integer)down.getTag(), getNextTag(down),down));
+            }
+            if(left != null){
+                left.startAnimation(getRotation(0,-90,(Integer)left.getTag(), getNextTag(left),left));
             }
 
             //update the counter moves
@@ -173,8 +126,7 @@ public class ShapeImage {
         return rotation;
     }
 
-    public ShapeImage(Context context, String level, String shape){
-        this.level = level;
+    public ShapeImage(Context context, String shape){
         this.shape = new ImageButton(context);
         this.shape.setLayoutParams(new TableRow.LayoutParams(convertDpToPx(85,(Activity)context),convertDpToPx(85,(Activity)context)));
         if(shape != null){
