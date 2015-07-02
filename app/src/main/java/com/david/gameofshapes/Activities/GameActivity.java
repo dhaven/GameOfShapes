@@ -302,7 +302,11 @@ public class GameActivity extends Activity {
                                             rows[i].removeView(listImages[i][j].getImage());
                                         }
                                     }
-                                    buildSolvableTable(listImages, rows, 4);
+                                    if(PuzzleSelectionActivity.puzzleList.size() > puzzleId+1) {
+                                        puzzleId++;
+                                    }
+                                    buildSpecificTable(listImages, rows, PuzzleSelectionActivity.puzzleList.get(puzzleId));
+                                    numPuzzle.setText(""+(puzzleId+1));
                                     onAppearanceAnimations(allAnimations);
                                     ShapeImage.setCounter(numMoves);
                                     ShapeImage.finish = false;
@@ -421,6 +425,7 @@ public class GameActivity extends Activity {
 
         @Override
         protected Void doInBackground(Integer... params) {
+
             ShapesDbHelper myDbHelper = new ShapesDbHelper(GameActivity.contextGameActivity);
             SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
             ContentValues values = new ContentValues();
