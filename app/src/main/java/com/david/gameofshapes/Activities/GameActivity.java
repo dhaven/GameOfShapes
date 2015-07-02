@@ -1,7 +1,10 @@
 package com.david.gameofshapes.Activities;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -17,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.david.gameofshapes.Animations.Flip3dAnimation;
+import com.david.gameofshapes.Database.DbContract;
+import com.david.gameofshapes.Database.ShapesDbHelper;
 import com.david.gameofshapes.Puzzle;
 import com.david.gameofshapes.R;
 import com.david.gameofshapes.ShapeImage;
@@ -35,7 +40,7 @@ public class GameActivity extends Activity {
     public static int puzzleId;
     private static TextView numPuzzle;
     public static Context contextGameActivity;
-    //private String level;
+    public static AsyncTask<Integer,Void,Void> writeTask;
 
     public static TextView viewCounterMoves;
     public static int numMoves;
@@ -73,6 +78,7 @@ public class GameActivity extends Activity {
         rows = new TableRow[4];
         resetImages = new ShapeImage[4][4];
         allAnimations = new Flip3dAnimation[4][4];
+        writeTask = new WriteDataTask();
     }
 
                                     //********* CREATION OF THE PUZZLE ******
@@ -403,5 +409,21 @@ public class GameActivity extends Activity {
             }
         }
         setAdjacency(out);
+    }
+
+    private class WriteDataTask extends AsyncTask<Integer,Void,Void> {
+
+        @Override
+        protected Void doInBackground(Integer... params) {
+            ShapesDbHelper myDbHelper = new ShapesDbHelper(GameActivity.contextGameActivity);
+            SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(DbContract.PuzzlesTable.COLUMN_NAME_SOLVED,1);
+            int count = myDb.update(DbContract.PuzzlesTable.TABNAME,values,DbContract.PuzzlesTable.COLUMN_NAME_PUZZLEID + " = '" + params[0] + "'",null);
+            return null;
+        }
+
+        protected void onPostExecute(ArrayList<Puzzle> result) {
+        }
     }
 }

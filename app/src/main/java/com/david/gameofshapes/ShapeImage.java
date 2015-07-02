@@ -1,7 +1,10 @@
 package com.david.gameofshapes;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -13,6 +16,8 @@ import com.david.gameofshapes.Activities.GameActivity;
 import com.david.gameofshapes.Activities.PuzzleSelectionActivity;
 import com.david.gameofshapes.Animations.DisplayNextView;
 import com.david.gameofshapes.Animations.Flip3dAnimation;
+import com.david.gameofshapes.Database.DbContract;
+import com.david.gameofshapes.Database.ShapesDbHelper;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -111,6 +116,7 @@ public class ShapeImage {
                 finish = true;
                 win = true;
                 PuzzleSelectionActivity.adapter.getAllPuzzles().get(GameActivity.puzzleId).setSolved(1);
+                GameActivity.writeTask.execute(GameActivity.puzzleId + 1);
                 GameActivity.winProcedure();
             }
         }

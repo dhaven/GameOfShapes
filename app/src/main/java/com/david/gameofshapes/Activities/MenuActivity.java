@@ -87,6 +87,7 @@ public class MenuActivity extends Activity{
             PuzzleSelectionActivity.puzzleList = result;
         }
     }
+
     public void onClick(View view){ //old
         Button thisButton = (Button) view;
         Intent intent = new Intent(this,GameActivity.class);

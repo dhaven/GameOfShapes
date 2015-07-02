@@ -55,12 +55,6 @@ public class PuzzleSelectionActivity extends Activity {
         return true;
     }
 
-    /**@Override
-    public void onBackPressed(){
-        super.onBackPressed();
-        adapter.notifyDataSetChanged();
-    }**/
-
     @Override
     protected void onResume(){
         super.onResume();
