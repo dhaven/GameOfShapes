@@ -29,13 +29,14 @@ public class GameActivity extends Activity {
     private ImageButton square;
     private ImageButton triangle;
     private ImageButton circle;
-    private TableLayout tableLayout;
+    private static TableLayout tableLayout;
     private LinearLayout container;
-    private TableRow[] rows;
+    private static TableRow[] rows;
     private static ShapeImage[][] listImages;
-    private ShapeImage[][] resetImages;
-    private Flip3dAnimation[][] allAnimations;
-    private int puzzleId;
+    private static ShapeImage[][] resetImages;
+    private static Flip3dAnimation[][] allAnimations;
+    private static int puzzleId;
+    public static Context contextGameActivity;
     //private String level;
 
     public static TextView viewCounterMoves;
@@ -44,116 +45,69 @@ public class GameActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gamelayout);
+
+        initializeVariables();
+
+        buildSpecificTable(listImages,rows,PuzzleSelectionActivity.puzzleList.get(puzzleId));
+        //buildSolvableTable(listImages,rows,4);
+
+        copyImage(listImages,resetImages);
+
+        onAppearanceAnimations(allAnimations);
+
+        viewCounterMoves = (TextView) findViewById(R.id.counter_moves);
+        viewCounterMoves.setText(""+ ShapeImage.getCounter());
+
+        ShapeImage.setNumPenta(numberOfPentagones());
+    }
+
+    //Initialize the variables used by the activity
+    public void initializeVariables(){
+        contextGameActivity = this;
         tableLayout = (TableLayout) findViewById(R.id.grid);
         container = (LinearLayout) findViewById(R.id.container);
         //level = getIntent().getStringExtra("menulayout");
         puzzleId = getIntent().getIntExtra("puzzleId",-1);
         listImages = new ShapeImage[4][4];
         rows = new TableRow[4];
-        buildSpecificTable(listImages,rows,PuzzleSelectionActivity.puzzleList.get(puzzleId));
-        //buildSolvableTable(listImages,rows,4);
         resetImages = new ShapeImage[4][4];
-        copyImage(listImages,resetImages);
         allAnimations = new Flip3dAnimation[4][4];
-        onAppearanceAnimations(allAnimations);
-
-        viewCounterMoves = (TextView) findViewById(R.id.counter_moves);
-        viewCounterMoves.setText(""+ ShapeImage.getCounter());
-
-        int n = numberOfPentagones();
-        ShapeImage.setNumPenta(n);
-
-        lostOrWin();
     }
-    //old
-    public void buildRandomTable(ShapeImage[][] listImages, TableRow[] rows,String level){
+
+                                    //********* CREATION OF THE PUZZLE ******
+
+    public static void buildSpecificTable(ShapeImage[][] listImages, TableRow[] rows, Puzzle puzzle){
+        String[] labels = puzzle.getConfig().split(",");
+        //Toast.makeText(this,labels.toString(), Toast.LENGTH_LONG).show();
+        int level = 0;
         for(int i = 0; i < listImages.length;i++) {
-            rows[i] = new TableRow(this);
+            rows[i] = new TableRow(contextGameActivity);
             rows[i].setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
             for (int j = 0; j < listImages[0].length; j++) {
-                listImages[i][j] = new ShapeImage(this,null);
-                rows[i].addView(listImages[i][j].getImage());
+                if(labels[j + level].equals("T")){
+                    listImages[i][j] = new ShapeImage(contextGameActivity,"triangle");
+                    rows[i].addView(listImages[i][j].getImage());
+                }else if(labels[j + level].equals("C")){
+                    listImages[i][j] = new ShapeImage(contextGameActivity,"square");
+                    rows[i].addView(listImages[i][j].getImage());
+                }else{
+                    listImages[i][j] = new ShapeImage(contextGameActivity,"penta");
+                    rows[i].addView(listImages[i][j].getImage());
+                }
             }
             tableLayout.addView(rows[i]);
+            level+=4;
         }
         setAdjacency(listImages);
     }
 
-    public void onAppearanceAnimations(Flip3dAnimation[][] allAnimations){
-        long delay = 300;
-        final float centerX = listImages[0][0].getImage().getWidth()/2.0f;
-        final float centerY = listImages[0][0].getImage().getHeight()/2.0f;
-        for(int i = 0; i < listImages.length; i++){
-            for(int j = 0; j < listImages[0].length; j++){
-                allAnimations[i][j] = new Flip3dAnimation(-90,0,centerX,centerY);
-                allAnimations[i][j].setInterpolator(new AccelerateInterpolator());
-                allAnimations[i][j].setFillAfter(true);
-                allAnimations[i][j].setDuration(300);
-                allAnimations[i][j].setStartOffset(delay);
-                listImages[i][j].getImage().startAnimation(allAnimations[i][j]);
-                delay += 150;
-            }
-        }
-    }
-
-    //Switch a puzzle
-    public void switchPuzzle(){
-        long delay = 0;
-        int h = tableLayout.getHeight();
-        int w = tableLayout.getWidth();
-        tableLayout.setMinimumHeight(h);
-        tableLayout.setMinimumWidth(w);
-
-        for(int i = 0; i < listImages.length; i++){
-            for(int j = 0; j < listImages[i].length; j++){
-                Animation disappearAnimation = AnimationUtils.loadAnimation(this, R.anim.disappearance_animation);
-                final int a = i;
-                final int b = j;
-                disappearAnimation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        Handler handler = new Handler();
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                listImages[a][b].getImage().setAlpha(0f);
-                                if (a == listImages.length - 1 && b == listImages[a].length - 1) {
-                                    for (int i = 0; i < listImages.length; i++) {
-                                        for (int j = 0; j < listImages[i].length; j++) {
-                                            rows[i].removeView(listImages[i][j].getImage());
-                                        }
-                                    }
-                                    buildSolvableTable(listImages, rows, 4);
-                                    onAppearanceAnimations(allAnimations);
-                                }
-                            }
-                        });
-
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-                });
-                disappearAnimation.setStartOffset(delay);
-                listImages[i][j].getImage().startAnimation(disappearAnimation);
-                delay += 150;
-            }
-        }
-    }
-
     //to keep for speedrun
-    public void buildSolvableTable(ShapeImage[][] listImages, TableRow[] rows, int numMoves){
+    public static void buildSolvableTable(ShapeImage[][] listImages, TableRow[] rows, int numMoves){
         for(int i = 0; i < listImages.length;i++) {
-            rows[i] = new TableRow(this);
+            rows[i] = new TableRow(contextGameActivity);
             rows[i].setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
             for (int j = 0; j < listImages[0].length; j++) {
-                listImages[i][j] = new ShapeImage(this,"penta");
+                listImages[i][j] = new ShapeImage(contextGameActivity,"penta");
                 rows[i].addView(listImages[i][j].getImage());
             }
             tableLayout.addView(rows[i]);
@@ -187,68 +141,8 @@ public class GameActivity extends Activity {
 
         }
     }
-    public void buildSpecificTable(ShapeImage[][] listImages, TableRow[] rows, Puzzle puzzle){
-        String[] labels = puzzle.getConfig().split(",");
-        //Toast.makeText(this,labels.toString(), Toast.LENGTH_LONG).show();
-        int level = 0;
-        for(int i = 0; i < listImages.length;i++) {
-            rows[i] = new TableRow(this);
-            rows[i].setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
-            for (int j = 0; j < listImages[0].length; j++) {
-                if(labels[j + level].equals("T")){
-                    listImages[i][j] = new ShapeImage(this,"triangle");
-                    rows[i].addView(listImages[i][j].getImage());
-                }else if(labels[j + level].equals("C")){
-                    listImages[i][j] = new ShapeImage(this,"square");
-                    rows[i].addView(listImages[i][j].getImage());
-                }else{
-                    listImages[i][j] = new ShapeImage(this,"penta");
-                    rows[i].addView(listImages[i][j].getImage());
-                }
-            }
-            tableLayout.addView(rows[i]);
-            level+=4;
-        }
-        setAdjacency(listImages);
-    }
 
-    public void reset(View view){
-        resetProc();
-    }
-
-    //Procedure when reseting the game
-    public void resetProc(){
-        copyImage(resetImages,listImages);
-        for(int i = 0; i < rows.length; i++){
-            rows[i].removeAllViews();
-        }
-        tableLayout.removeAllViews();
-        for(int i = 0; i < listImages.length; i++){
-            rows[i] = new TableRow(this);
-            rows[i].setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
-            for(int j = 0; j < listImages[0].length; j++){
-                rows[i].addView(listImages[i][j].getImage());
-            }
-            tableLayout.addView(rows[i]);
-        }
-
-        //reset the counter
-        ShapeImage.setCounter(20);
-        ShapeImage.finish = false;
-        ShapeImage.win = false;
-        ShapeImage.setNumPenta(numberOfPentagones());
-        viewCounterMoves.setText("" + ShapeImage.getCounter());
-    }
-
-    public void copyImage(ShapeImage[][] in, ShapeImage[][] out){
-        for(int i = 0; i < in.length; i++){
-            for(int j = 0; j < in[0].length; j++){
-                out[i][j] = new ShapeImage(this,in[i][j].imgToString(in[i][j].getImage()));
-            }
-        }
-        setAdjacency(out);
-    }
-    public void setAdjacency(ShapeImage[][] listImages){
+    public static void setAdjacency(ShapeImage[][] listImages){
         for(int i = 0; i < listImages.length;i++) {
             for (int j = 0; j < listImages[0].length; j++) {
                 if(i == 0 && j == 0){
@@ -301,49 +195,54 @@ public class GameActivity extends Activity {
         }
     }
 
-    //check if the player has lost the game
-    public void lostOrWin(){
-        final Context context = this;
-        final Handler handler = new Handler();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(ShapeImage.finish == false){
-                    try {
-                        Thread.sleep(250);
-                    }catch(InterruptedException e){
-                        System.err.println("Error: " + e.getMessage());
-                    }
-                }
-                if(ShapeImage.win == false) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            looseProcedure(context);
-                        }
-                    });
-                }
-                else{
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            winProcedure(context);
-                        }
-                    });
-                }
-            }
-        }).start();
 
+    //old
+    public void buildRandomTable(ShapeImage[][] listImages, TableRow[] rows,String level){
+        for(int i = 0; i < listImages.length;i++) {
+            rows[i] = new TableRow(this);
+            rows[i].setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
+            for (int j = 0; j < listImages[0].length; j++) {
+                listImages[i][j] = new ShapeImage(this,null);
+                rows[i].addView(listImages[i][j].getImage());
+            }
+            tableLayout.addView(rows[i]);
+        }
+        setAdjacency(listImages);
     }
 
+    public static void onAppearanceAnimations(Flip3dAnimation[][] allAnimations){
+        long delay = 300;
+        final float centerX = listImages[0][0].getImage().getWidth()/2.0f;
+        final float centerY = listImages[0][0].getImage().getHeight()/2.0f;
+        for(int i = 0; i < listImages.length; i++){
+            for(int j = 0; j < listImages[0].length; j++){
+                allAnimations[i][j] = new Flip3dAnimation(-90,0,centerX,centerY);
+                allAnimations[i][j].setInterpolator(new AccelerateInterpolator());
+                allAnimations[i][j].setFillAfter(true);
+                allAnimations[i][j].setDuration(300);
+                allAnimations[i][j].setStartOffset(delay);
+                listImages[i][j].getImage().startAnimation(allAnimations[i][j]);
+                delay += 150;
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+                                            // ***** WIN OR LOSE PROCEDURES *******
+
     //Procedure when the player win
-    public void winProcedure(Context context){
+    public static void winProcedure(){
         //Show the failure image with it's animation
-        final ImageView successImage = new ImageView(context);
+        final ImageView successImage = new ImageView(contextGameActivity);
         successImage.setImageResource(R.drawable.success_message);
         successImage.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
-        TableLayout grid = (TableLayout) findViewById(R.id.grid);
-        grid.addView(successImage);
+        tableLayout.addView(successImage);
 
         final Handler handler = new Handler();
 
@@ -369,15 +268,67 @@ public class GameActivity extends Activity {
         }).start();
     }
 
+
+    //Switch a puzzle
+    public static void switchPuzzle(){
+        long delay = 0;
+        int h = tableLayout.getHeight();
+        int w = tableLayout.getWidth();
+        tableLayout.setMinimumHeight(h);
+        tableLayout.setMinimumWidth(w);
+
+        for(int i = 0; i < listImages.length; i++){
+            for(int j = 0; j < listImages[i].length; j++){
+                Animation disappearAnimation = AnimationUtils.loadAnimation(contextGameActivity, R.anim.disappearance_animation);
+                final int a = i;
+                final int b = j;
+                disappearAnimation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        Handler handler = new Handler();
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                listImages[a][b].getImage().setAlpha(0f);
+                                if (a == listImages.length - 1 && b == listImages[a].length - 1) {
+                                    for (int i = 0; i < listImages.length; i++) {
+                                        for (int j = 0; j < listImages[i].length; j++) {
+                                            rows[i].removeView(listImages[i][j].getImage());
+                                        }
+                                    }
+                                    buildSolvableTable(listImages, rows, 4);
+                                    onAppearanceAnimations(allAnimations);
+                                }
+                            }
+                        });
+
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
+                disappearAnimation.setStartOffset(delay);
+                listImages[i][j].getImage().startAnimation(disappearAnimation);
+                delay += 150;
+            }
+        }
+    }
+
+
     //Procedure when the player loose
-    public void looseProcedure(Context context){
+    public static void looseProcedure(){
         //Show the failure image with it's animation
-        ImageView failureImage = new ImageView(context);
+        ImageView failureImage = new ImageView(contextGameActivity);
         failureImage.setImageResource(R.drawable.failure_message);
         failureImage.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
-        TableLayout grid = (TableLayout) findViewById(R.id.grid);
-        grid.addView(failureImage);
-        Animation failure_animation = AnimationUtils.loadAnimation(context, R.anim.loose_animation);
+        tableLayout.addView(failureImage);
+        Animation failure_animation = AnimationUtils.loadAnimation(contextGameActivity, R.anim.loose_animation);
         failureImage.startAnimation(failure_animation);
 
         final long animationTime = failure_animation.computeDurationHint();
@@ -405,8 +356,40 @@ public class GameActivity extends Activity {
 
     }
 
+                             //  ***** ADDITIONNAL METHODS ******
+
+
+    public void reset(View view){
+        resetProc();
+    }
+
+    //Procedure when reseting the game
+    public static void resetProc(){
+        copyImage(resetImages,listImages);
+        for(int i = 0; i < rows.length; i++){
+            rows[i].removeAllViews();
+        }
+        tableLayout.removeAllViews();
+        for(int i = 0; i < listImages.length; i++){
+            rows[i] = new TableRow(contextGameActivity);
+            rows[i].setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
+            for(int j = 0; j < listImages[0].length; j++){
+                rows[i].addView(listImages[i][j].getImage());
+            }
+            tableLayout.addView(rows[i]);
+        }
+
+        //reset the counter
+        ShapeImage.setCounter(20);
+        ShapeImage.finish = false;
+        ShapeImage.win = false;
+        ShapeImage.setNumPenta(numberOfPentagones());
+        viewCounterMoves.setText("" + ShapeImage.getCounter());
+    }
+
+
     //Return the actual number of pentagones.
-    public int numberOfPentagones(){
+    public static int numberOfPentagones(){
         int n = 0;
         for(int i = 0; i < listImages.length; i++){
             for(int j = 0; j < listImages[i].length; j++){
@@ -416,5 +399,14 @@ public class GameActivity extends Activity {
             }
         }
         return n;
+    }
+
+    public static void copyImage(ShapeImage[][] in, ShapeImage[][] out){
+        for(int i = 0; i < in.length; i++){
+            for(int j = 0; j < in[0].length; j++){
+                out[i][j] = new ShapeImage(contextGameActivity,in[i][j].imgToString(in[i][j].getImage()));
+            }
+        }
+        setAdjacency(out);
     }
 }

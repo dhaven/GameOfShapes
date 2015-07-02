@@ -93,6 +93,7 @@ public class ShapeImage {
                 counterSem.acquire();
                 if (counterMoves <= 0) {//condition for player losing
                     finish = true;
+                    GameActivity.looseProcedure();
 
                 }
                 counterSem.release();
@@ -108,6 +109,7 @@ public class ShapeImage {
             if (numPenta == 16){
                 finish = true;
                 win = true;
+                GameActivity.winProcedure();
             }
         }
     }
