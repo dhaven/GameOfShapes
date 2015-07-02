@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TableRow;
 
 import com.david.gameofshapes.Activities.GameActivity;
+import com.david.gameofshapes.Activities.PuzzleSelectionActivity;
 import com.david.gameofshapes.Animations.DisplayNextView;
 import com.david.gameofshapes.Animations.Flip3dAnimation;
 
@@ -27,7 +28,7 @@ public class ShapeImage {
     private ImageButton down;
     private ImageButton left;
     private ImageButton right;
-    private static int counterMoves = 20;
+    private static int counterMoves;
     private static int numPenta = 0;
     private static Semaphore counterSem = new Semaphore(1, true);
     public static boolean finish = false;
@@ -109,6 +110,7 @@ public class ShapeImage {
             if (numPenta == 16){
                 finish = true;
                 win = true;
+                PuzzleSelectionActivity.adapter.getAllPuzzles().get(GameActivity.puzzleId).setSolved(1);
                 GameActivity.winProcedure();
             }
         }

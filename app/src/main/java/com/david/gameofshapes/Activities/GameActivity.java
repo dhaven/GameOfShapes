@@ -26,20 +26,19 @@ import java.util.Random;
 
 
 public class GameActivity extends Activity {
-    private ImageButton square;
-    private ImageButton triangle;
-    private ImageButton circle;
     private static TableLayout tableLayout;
     private LinearLayout container;
     private static TableRow[] rows;
     private static ShapeImage[][] listImages;
     private static ShapeImage[][] resetImages;
     private static Flip3dAnimation[][] allAnimations;
-    private static int puzzleId;
+    public static int puzzleId;
+    private static TextView numPuzzle;
     public static Context contextGameActivity;
     //private String level;
 
     public static TextView viewCounterMoves;
+    public static int numMoves;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,15 +47,12 @@ public class GameActivity extends Activity {
 
         initializeVariables();
 
-        buildSpecificTable(listImages,rows,PuzzleSelectionActivity.puzzleList.get(puzzleId));
+        buildSpecificTable(listImages, rows, PuzzleSelectionActivity.puzzleList.get(puzzleId));
         //buildSolvableTable(listImages,rows,4);
 
-        copyImage(listImages,resetImages);
+        copyImage(listImages, resetImages);
 
         onAppearanceAnimations(allAnimations);
-
-        viewCounterMoves = (TextView) findViewById(R.id.counter_moves);
-        viewCounterMoves.setText(""+ ShapeImage.getCounter());
 
         ShapeImage.setNumPenta(numberOfPentagones());
     }
@@ -66,8 +62,13 @@ public class GameActivity extends Activity {
         contextGameActivity = this;
         tableLayout = (TableLayout) findViewById(R.id.grid);
         container = (LinearLayout) findViewById(R.id.container);
-        //level = getIntent().getStringExtra("menulayout");
+        numPuzzle = (TextView) findViewById(R.id.puzzleid);
+        viewCounterMoves = (TextView) findViewById(R.id.counter_moves);
         puzzleId = getIntent().getIntExtra("puzzleId",-1);
+        numPuzzle.setText(""+(puzzleId+1));
+        numMoves = PuzzleSelectionActivity.puzzleList.get(puzzleId).getNum_moves();
+        viewCounterMoves.setText("" + numMoves);
+        ShapeImage.setCounter(numMoves);
         listImages = new ShapeImage[4][4];
         rows = new TableRow[4];
         resetImages = new ShapeImage[4][4];
@@ -228,12 +229,6 @@ public class GameActivity extends Activity {
     }
 
 
-
-
-
-
-
-
                                             // ***** WIN OR LOSE PROCEDURES *******
 
     //Procedure when the player win
@@ -380,7 +375,7 @@ public class GameActivity extends Activity {
         }
 
         //reset the counter
-        ShapeImage.setCounter(20);
+        ShapeImage.setCounter(numMoves);
         ShapeImage.finish = false;
         ShapeImage.win = false;
         ShapeImage.setNumPenta(numberOfPentagones());

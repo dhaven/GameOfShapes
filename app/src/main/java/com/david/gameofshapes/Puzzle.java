@@ -36,8 +36,18 @@ public class Puzzle {
     public int getSize(){
         return this.size;
     }
-    public int getSolved(){
-        return this.solved;
-    }
+    public int getSolved(){return this.solved;}
     public String getConfig(){ return this.config; }
+
+    public void setPuzzle_id(int puzzle_id){ this.puzzle_id = puzzle_id;
+    }
+    public void setDifficulty(String difficulty){
+        this.difficulty = difficulty;
+    }
+    public void setNum_moves(int num_moves){
+        this.num_moves = num_moves;
+    }
+    public void setSize(int size){this.size = size;}
+    public void setSolved(int solved){this.solved = solved;}
+    public void setConfig(String config){ this.config = config; }
 }

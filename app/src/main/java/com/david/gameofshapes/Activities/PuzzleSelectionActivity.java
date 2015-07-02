@@ -23,14 +23,15 @@ import java.util.ArrayList;
 
 public class PuzzleSelectionActivity extends Activity {
 
-    public static ArrayList<Puzzle> puzzleList;
+    public static ArrayList<Puzzle> puzzleList; //list of all puzzles
     public static ImageAdapter adapter;
+    public static GridView grid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_puzzle_selection);
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        GridView grid = (GridView) findViewById(R.id.grid);
+        grid = (GridView) findViewById(R.id.grid);
         adapter = new ImageAdapter(this,puzzleList);
         grid.setAdapter(adapter);
         //Toast.makeText(this, puzzleList.get(0).getConfig().toString(),Toast.LENGTH_LONG).show();
@@ -54,10 +55,17 @@ public class PuzzleSelectionActivity extends Activity {
         return true;
     }
 
+    /**@Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        adapter.notifyDataSetChanged();
+    }**/
+
     @Override
     protected void onResume(){
         super.onResume();
-        adapter.notifyDataSetChanged();
+        adapter = new ImageAdapter(this,puzzleList);
+        grid.setAdapter(adapter);
     }
 
     @Override

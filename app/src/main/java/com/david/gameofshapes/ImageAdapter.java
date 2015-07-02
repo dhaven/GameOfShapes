@@ -24,6 +24,7 @@ public class ImageAdapter extends BaseAdapter {
     public ImageAdapter(Context c,ArrayList<Puzzle> allPuzzles){
         mContext = c;
         this.allPuzzles = allPuzzles;
+
     }
     @Override
     public int getCount() {
@@ -83,5 +84,21 @@ public class ImageAdapter extends BaseAdapter {
             individual = (RelativeLayout) convertView;
         }
         return individual;
+    }
+
+    public ArrayList<Puzzle> getAllPuzzles() {
+        return allPuzzles;
+    }
+
+    public void setAllPuzzles(ArrayList<Puzzle> allPuzzles) {
+        this.allPuzzles = allPuzzles;
+    }
+
+    public Context getmContext() {
+        return mContext;
+    }
+
+    public void setmContext(Context mContext) {
+        this.mContext = mContext;
     }
 }
