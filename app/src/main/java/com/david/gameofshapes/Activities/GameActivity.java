@@ -3,6 +3,7 @@ package com.david.gameofshapes.Activities;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -303,6 +304,11 @@ public class GameActivity extends Activity {
                                     }
                                     buildSolvableTable(listImages, rows, 4);
                                     onAppearanceAnimations(allAnimations);
+                                    ShapeImage.setCounter(numMoves);
+                                    ShapeImage.finish = false;
+                                    ShapeImage.win = false;
+                                    ShapeImage.setNumPenta(numberOfPentagones());
+                                    viewCounterMoves.setText("" + ShapeImage.getCounter());
                                 }
                             }
                         });
@@ -425,5 +431,12 @@ public class GameActivity extends Activity {
 
         protected void onPostExecute(ArrayList<Puzzle> result) {
         }
+    }
+
+    public void onBackPressed(){
+        ShapeImage.finish = false;
+        ShapeImage.win = false;
+
+        super.onBackPressed();
     }
 }
