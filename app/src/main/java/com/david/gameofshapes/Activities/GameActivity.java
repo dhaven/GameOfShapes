@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 
-public class GameActivity extends Activity {
+public class GameActivity extends Activity implements View.OnClickListener {
     private static TableLayout tableLayout;
     private LinearLayout container;
     private static TableRow[] rows;
@@ -80,6 +80,10 @@ public class GameActivity extends Activity {
         resetImages = new ShapeImage[4][4];
         allAnimations = new Flip3dAnimation[4][4];
         writeTask = new WriteDataTask();
+        ImageView previous = (ImageView)findViewById(R.id.prev);
+        ImageView next = (ImageView)findViewById(R.id.next);
+        previous.setOnClickListener(this);
+        next.setOnClickListener(this);
     }
 
                                     //********* CREATION OF THE PUZZLE ******
@@ -261,6 +265,7 @@ public class GameActivity extends Activity {
                     @Override
                     public void run() {
                         tableLayout.removeView(successImage);
+                        nextPuzzleId();
                         switchPuzzle();
 
                     }
@@ -278,6 +283,7 @@ public class GameActivity extends Activity {
         int w = tableLayout.getWidth();
         tableLayout.setMinimumHeight(h);
         tableLayout.setMinimumWidth(w);
+        numPuzzle.setText(""+(puzzleId+1));
 
         for(int i = 0; i < listImages.length; i++){
             for(int j = 0; j < listImages[i].length; j++){
@@ -302,11 +308,7 @@ public class GameActivity extends Activity {
                                             rows[i].removeView(listImages[i][j].getImage());
                                         }
                                     }
-                                    if(PuzzleSelectionActivity.puzzleList.size() > puzzleId+1) {
-                                        puzzleId++;
-                                    }
                                     buildSpecificTable(listImages, rows, PuzzleSelectionActivity.puzzleList.get(puzzleId));
-                                    numPuzzle.setText(""+(puzzleId+1));
                                     onAppearanceAnimations(allAnimations);
                                     ShapeImage.setCounter(numMoves);
                                     ShapeImage.finish = false;
@@ -443,5 +445,35 @@ public class GameActivity extends Activity {
         ShapeImage.win = false;
 
         super.onBackPressed();
+    }
+
+
+    //onClick methods for the imageView next and previous.
+    public void onClick(View v){
+        int id = v.getId();
+        switch(id){
+            case R.id.prev:
+                previousPuzzleId();
+                switchPuzzle();
+                break;
+            case R.id.next:
+                nextPuzzleId();
+                switchPuzzle();
+                break;
+        }
+    }
+
+    public static int previousPuzzleId(){
+        if(puzzleId > 0) {
+            puzzleId--;
+        }
+        return puzzleId;
+    }
+
+    public static int nextPuzzleId(){
+        if(PuzzleSelectionActivity.puzzleList.size() > puzzleId+1) {
+            puzzleId++;
+        }
+        return puzzleId;
     }
 }
