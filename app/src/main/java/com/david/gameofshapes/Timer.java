@@ -57,7 +57,13 @@ public class Timer {
                 }
 
                 finished = true;
-                executeCompletionMethod();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        executeCompletionMethod();
+                    }
+                });
+
             }
         }).start();
     }

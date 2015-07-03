@@ -81,7 +81,57 @@ public class SpeedRunActivity extends Activity{
         resetImages = new ShapeImage[4][4];
         allAnimations = new Flip3dAnimation[4][4];
         isSpeedRun = true;
-        timer = new Timer(timeLimit, timerView, null);
+        timer = new Timer(timeLimit, timerView,onTimerExtinct());
+    }
+
+
+    //Methode executed when the timer is finished
+    public Timer.TimerListener onTimerExtinct(){
+
+        return new Timer.TimerListener() {
+            long delay = 0;
+            @Override
+            public void run() {
+                for(int i = 0; i < listImages.length; i++){
+                    for(int j = 0; j < listImages[i].length; j++){
+                        Animation disappearAnimation = AnimationUtils.loadAnimation(contextGameActivity, R.anim.disappearance_animation);
+                        final int a = i;
+                        final int b = j;
+                        disappearAnimation.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                Handler handler = new Handler();
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        listImages[a][b].getImage().setAlpha(0f);
+                                        if (a == listImages.length - 1 && b == listImages[a].length - 1) {
+                                            for (int i = 0; i < listImages.length; i++) {
+                                                for (int j = 0; j < listImages[i].length; j++) {
+                                                    rows[i].removeView(listImages[i][j].getImage());
+                                                }
+                                            }
+                                            resetGameVariables();
+                                        }
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+                            }
+                        });
+                        disappearAnimation.setStartOffset(delay);
+                        listImages[i][j].getImage().startAnimation(disappearAnimation);
+                        delay += 150;
+                    }
+                }
+            }
+        };
     }
 
     //********* CREATION OF THE PUZZLE ******
@@ -383,6 +433,7 @@ public class SpeedRunActivity extends Activity{
     public void onBackPressed(){
         resetGameVariables();
         isSpeedRun = false;
+        timer.cancel();
 
         super.onBackPressed();
     }
