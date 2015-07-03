@@ -26,6 +26,9 @@ import com.david.gameofshapes.Database.ShapesDbHelper;
 import com.david.gameofshapes.Puzzle;
 import com.david.gameofshapes.R;
 import com.david.gameofshapes.ShapeImage;
+import com.david.gameofshapes.Timer;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -42,6 +45,9 @@ public class SpeedRunActivity extends Activity{
     private static TextView numPuzzle;
     public static Context contextGameActivity;
     public static boolean isSpeedRun = false;
+    public static TextView timerView;
+    public static Timer timer;
+    public long timeLimit = 60000; //60 seconds
 
 
     @Override
@@ -66,6 +72,7 @@ public class SpeedRunActivity extends Activity{
         tableLayout = (TableLayout) findViewById(R.id.grid);
         container = (LinearLayout) findViewById(R.id.container);
         numPuzzle = (TextView) findViewById(R.id.puzzleid);
+        timerView = (TextView) findViewById(R.id.timer_view);
         numberPuzzle = 1;
         numPuzzle.setText(""+ numberPuzzle);
         listImages = new ShapeImage[4][4];
@@ -73,6 +80,7 @@ public class SpeedRunActivity extends Activity{
         resetImages = new ShapeImage[4][4];
         allAnimations = new Flip3dAnimation[4][4];
         isSpeedRun = true;
+        timer = new Timer(timeLimit, timerView);
     }
 
     //********* CREATION OF THE PUZZLE ******
@@ -280,8 +288,8 @@ public class SpeedRunActivity extends Activity{
     }
 
 
-    //Procedure when the player loose
-    public static void looseProcedure(){
+    //Procedure when the player timer finished
+    public static void timerProcedure(){
         //Show the failure image with it's animation
         ImageView failureImage = new ImageView(contextGameActivity);
         failureImage.setImageResource(R.drawable.failure_message);
