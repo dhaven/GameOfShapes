@@ -64,7 +64,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
         android:background="@drawable/level"
         android:layout_marginBottom="15dp"
         android:layout_marginRight="5dp"
@@ -80,10 +79,9 @@
             android:onClick="reset"
             android:clickable="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginLeft="58dp"
-            android:layout_marginStart="58dp" />
+            android:layout_toLeftOf="@+id/counter_moves"
+            android:layout_toStartOf="@+id/counter_moves"
+            android:layout_marginRight="20dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -91,14 +89,28 @@
             android:paddingLeft="@dimen/padding_counter_left"
             android:id="@+id/counter_moves"
             android:textSize="@dimen/counter_text_size"
+            android:textColor="#ff000000"
+            android:text="0"
+            android:layout_marginRight="20dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/textView"
+            android:layout_toStartOf="@+id/textView"
+            android:layout_marginEnd="38dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Moves left"
+            android:id="@+id/textView"
+            android:textColor="#ff000000"
+            android:textSize="30sp"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginRight="71dp"
-            android:layout_marginEnd="71dp"
-            android:textColor="#ff000000" />
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="38dp" />
 
-     </RelativeLayout>
+    </RelativeLayout>
 
 
 </LinearLayout>

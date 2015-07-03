@@ -79,7 +79,6 @@ public class GameActivity extends Activity implements View.OnClickListener {
         rows = new TableRow[4];
         resetImages = new ShapeImage[4][4];
         allAnimations = new Flip3dAnimation[4][4];
-        writeTask = new WriteDataTask();
         ImageView previous = (ImageView)findViewById(R.id.prev);
         ImageView next = (ImageView)findViewById(R.id.next);
         previous.setOnClickListener(this);
@@ -283,7 +282,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         int w = tableLayout.getWidth();
         tableLayout.setMinimumHeight(h);
         tableLayout.setMinimumWidth(w);
-        numPuzzle.setText(""+(puzzleId+1));
+        numPuzzle.setText("" + (puzzleId + 1));
 
         for(int i = 0; i < listImages.length; i++){
             for(int j = 0; j < listImages[i].length; j++){
@@ -310,6 +309,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
                                     }
                                     buildSpecificTable(listImages, rows, PuzzleSelectionActivity.puzzleList.get(puzzleId));
                                     onAppearanceAnimations(allAnimations);
+                                    copyImage(listImages, resetImages);
                                     resetGameVariables();
                                     viewCounterMoves.setText("" + ShapeImage.getCounter());
                                 }
@@ -394,7 +394,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         viewCounterMoves.setText("" + ShapeImage.getCounter());
     }
 
-    public static void resetGameVariables(){
+    public static void resetGameVariables() {
         ShapeImage.setCounter(numMoves);
         ShapeImage.finish = false;
         ShapeImage.win = false;
@@ -422,23 +422,6 @@ public class GameActivity extends Activity implements View.OnClickListener {
             }
         }
         setAdjacency(out);
-    }
-
-    private class WriteDataTask extends AsyncTask<Integer,Void,Void> {
-
-        @Override
-        protected Void doInBackground(Integer... params) {
-
-            ShapesDbHelper myDbHelper = new ShapesDbHelper(GameActivity.contextGameActivity);
-            SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
-            ContentValues values = new ContentValues();
-            values.put(DbContract.PuzzlesTable.COLUMN_NAME_SOLVED,1);
-            int count = myDb.update(DbContract.PuzzlesTable.TABNAME,values,DbContract.PuzzlesTable.COLUMN_NAME_PUZZLEID + " = '" + params[0] + "'",null);
-            return null;
-        }
-
-        protected void onPostExecute(ArrayList<Puzzle> result) {
-        }
     }
 
     public void onBackPressed(){

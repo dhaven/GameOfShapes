@@ -119,7 +119,8 @@ public class ShapeImage {
                 finish = true;
                 win = true;
                 PuzzleSelectionActivity.adapter.getAllPuzzles().get(GameActivity.puzzleId).setSolved(1);
-                GameActivity.writeTask.execute(GameActivity.puzzleId + 1);
+                AsyncTask<Integer,Void,Void> writeTask = new WriteDataTask();
+                writeTask.execute(GameActivity.puzzleId + 1);
                 GameActivity.winProcedure();
             }
         }
@@ -271,6 +272,24 @@ public class ShapeImage {
 
     public static int convertDpToPx(int Dp, Activity act){
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, Dp, ((Activity) act).getResources().getDisplayMetrics());
+    }
+
+    private static class WriteDataTask extends AsyncTask<Integer,Void,Void> {
+
+        @Override
+        protected Void doInBackground(Integer... params) {
+
+            ShapesDbHelper myDbHelper = new ShapesDbHelper(GameActivity.contextGameActivity);
+            SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(DbContract.PuzzlesTable.COLUMN_NAME_SOLVED,1);
+            int count = myDb.update(DbContract.PuzzlesTable.TABNAME,values,DbContract.PuzzlesTable.COLUMN_NAME_PUZZLEID + " = '" + params[0] + "'",null);
+
+            return null;
+        }
+
+        protected void onPostExecute(ArrayList<Puzzle> result) {
+        }
     }
 
     public ImageButton getImage(){
