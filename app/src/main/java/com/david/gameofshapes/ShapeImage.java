@@ -140,7 +140,12 @@ public class ShapeImage {
         // Create a new 3D rotation with the supplied parameter
         // The animation listener is used to trigger the next animation
         final Flip3dAnimation rotation = new Flip3dAnimation(start, end, centerX, centerY);
-        rotation.setDuration(150);
+        if(SpeedRunActivity.isSpeedRun){
+            rotation.setDuration(50);
+        }
+        else{
+            rotation.setDuration(150);
+        }
         rotation.setFillAfter(true);
         rotation.setInterpolator(new DecelerateInterpolator());
         rotation.setAnimationListener(new DisplayNextView(fromImage, toImage, shape));
