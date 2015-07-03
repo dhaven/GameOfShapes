@@ -7,5 +7,6 @@
     <string name="title_activity_difficulty">Difficulty</string>
     <string name="reset_button">Reset</string>
     <string name="title_activity_puzzle_selection">PuzzleSelectionActivity</string>
+    <string name="title_activity_speed_run">SpeedRunActivity</string>
 
 </resources>

@@ -67,10 +67,8 @@ public class MenuActivity extends Activity{
          */
     }
     public void goToSpeedrun(View view){
-        /*
-        Todo
-        speedrun mode, how many puzzles can you solve in 60 seconds ?
-         */
+        Intent intent = new Intent(this, SpeedRunActivity.class);
+        startActivity(intent);
     }
 
     private class LoadDataTask extends AsyncTask<String,Void,ArrayList<Puzzle>> {

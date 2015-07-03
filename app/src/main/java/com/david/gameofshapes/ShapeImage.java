@@ -14,6 +14,7 @@ import android.widget.TableRow;
 
 import com.david.gameofshapes.Activities.GameActivity;
 import com.david.gameofshapes.Activities.PuzzleSelectionActivity;
+import com.david.gameofshapes.Activities.SpeedRunActivity;
 import com.david.gameofshapes.Animations.DisplayNextView;
 import com.david.gameofshapes.Animations.Flip3dAnimation;
 import com.david.gameofshapes.Database.DbContract;
@@ -68,7 +69,9 @@ public class ShapeImage {
             }
 
             //update the counter moves
-            updateMoves();
+            if(SpeedRunActivity.isSpeedRun == false) {
+                updateMoves();
+            }
             //verify if the player hasn't lost
             hasWin();
             hasLost();
@@ -94,7 +97,7 @@ public class ShapeImage {
 
     //Return true if the player has lost (counterMoves inferior or equal to 0)
     public static void hasLost(){
-        if(finish == false) {
+        if(finish == false && SpeedRunActivity.isSpeedRun==false) {
             try {
                 counterSem.acquire();
                 if (counterMoves <= 0) {//condition for player losing
@@ -111,13 +114,20 @@ public class ShapeImage {
     }
 
     public static void hasWin(){
-        if (finish == false){
+        if (finish == false && SpeedRunActivity.isSpeedRun == false){
             if (numPenta == 16){
                 finish = true;
                 win = true;
                 PuzzleSelectionActivity.adapter.getAllPuzzles().get(GameActivity.puzzleId).setSolved(1);
                 GameActivity.writeTask.execute(GameActivity.puzzleId + 1);
                 GameActivity.winProcedure();
+            }
+        }
+        else if (SpeedRunActivity.isSpeedRun == true){
+            if (numPenta == 16){
+                finish = true;
+                win = true;
+                SpeedRunActivity.winProcedure();
             }
         }
     }
