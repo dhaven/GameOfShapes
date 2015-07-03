@@ -53,7 +53,7 @@ public class SpeedRunActivity extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.gamelayout);
+        setContentView(R.layout.activity_speed_run);
 
         initializeVariables();
 
@@ -64,6 +64,7 @@ public class SpeedRunActivity extends Activity{
         onAppearanceAnimations(allAnimations);
 
         ShapeImage.setNumPenta(numberOfPentagones());
+        timer.start();
     }
 
     //Initialize the variables used by the activity
@@ -80,7 +81,7 @@ public class SpeedRunActivity extends Activity{
         resetImages = new ShapeImage[4][4];
         allAnimations = new Flip3dAnimation[4][4];
         isSpeedRun = true;
-        timer = new Timer(timeLimit, timerView);
+        timer = new Timer(timeLimit, timerView, null);
     }
 
     //********* CREATION OF THE PUZZLE ******

@@ -1,5 +1,6 @@
 package com.david.gameofshapes;
 
+import android.os.Handler;
 import android.widget.TextView;
 
 /**
@@ -18,7 +19,7 @@ public class Timer {
     public Timer(long time, TextView timerView){
         this.time = time;
         this.timerView = timerView;
-        timerView.setText("" + (int) time/1000);
+        timerView.setText("" + ((int) time/1000));
         finished = false;
         interrupt = false;
         listener = null;
@@ -37,12 +38,17 @@ public class Timer {
     //start the timer
     public void start(){
         startingTime = System.currentTimeMillis();
-
+        final Handler handler = new Handler();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 while(interrupt == false && elapsed() ==false){
-                    updateView();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateView();
+                        }
+                    });
                     try {
                         Thread.sleep(100);
                     }catch (InterruptedException e){
