@@ -310,10 +310,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
                                     }
                                     buildSpecificTable(listImages, rows, PuzzleSelectionActivity.puzzleList.get(puzzleId));
                                     onAppearanceAnimations(allAnimations);
-                                    ShapeImage.setCounter(numMoves);
-                                    ShapeImage.finish = false;
-                                    ShapeImage.win = false;
-                                    ShapeImage.setNumPenta(numberOfPentagones());
+                                    resetGameVariables();
                                     viewCounterMoves.setText("" + ShapeImage.getCounter());
                                 }
                             }
@@ -393,11 +390,15 @@ public class GameActivity extends Activity implements View.OnClickListener {
         }
 
         //reset the counter
+        resetGameVariables();
+        viewCounterMoves.setText("" + ShapeImage.getCounter());
+    }
+
+    public static void resetGameVariables(){
         ShapeImage.setCounter(numMoves);
         ShapeImage.finish = false;
         ShapeImage.win = false;
         ShapeImage.setNumPenta(numberOfPentagones());
-        viewCounterMoves.setText("" + ShapeImage.getCounter());
     }
 
 
@@ -441,8 +442,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
     }
 
     public void onBackPressed(){
-        ShapeImage.finish = false;
-        ShapeImage.win = false;
+        resetGameVariables();
 
         super.onBackPressed();
     }
