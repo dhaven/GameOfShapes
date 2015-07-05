@@ -124,7 +124,7 @@ public class ShapeImage {
                 GameActivity.winProcedure();
             }
         }
-        else if (SpeedRunActivity.isSpeedRun == true){
+        else if (SpeedRunActivity.isSpeedRun == true && finish == false){
             if (numPenta == 16){
                 finish = true;
                 win = true;
