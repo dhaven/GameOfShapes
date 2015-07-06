@@ -380,6 +380,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 dlg2.dismiss();
+                resetGameVariables();
                 ((Activity)contextGameActivity).finish();
             }
         });
