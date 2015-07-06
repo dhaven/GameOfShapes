@@ -250,7 +250,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         AlertDialog dlg = successDialog();
         dlg.show();
         nextPuzzleId();
-        switchPuzzle();
+        animatePuzzleOut();
 
     }
 
@@ -269,39 +269,14 @@ public class GameActivity extends Activity implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 dlg2.dismiss();
-                final Handler handler = new Handler();
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        while (!disappearAnimation.hasEnded()) {
-                            try {
-                                Thread.sleep(200);
-                            } catch (InterruptedException e) {
-                                System.err.println("Error: " + e.getMessage());
-                            }
-                        }
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                buildSpecificTable(listImages, rows, PuzzleSelectionActivity.puzzleList.get(puzzleId));
-                                copyImage(listImages, resetImages);
-                                resetGameVariables();
-                                viewCounterMoves.setText("" + ShapeImage.getCounter());
-                                onAppearanceAnimations(allAnimations);
-                            }
-                        });
-
-                    }
-                }).start();
+                animatePuzzleIn();
             }
         });
         return dlg;
     }
 
 
-    //Switch a puzzle
-    public static void switchPuzzle(){
+    public static void animatePuzzleOut(){
         long delay = 0;
         int h = tableLayout.getHeight();
         int w = tableLayout.getWidth();
@@ -349,6 +324,38 @@ public class GameActivity extends Activity implements View.OnClickListener {
             }
         }
     }
+    public static void animatePuzzleIn(){
+        final Handler handler = new Handler();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!disappearAnimation.hasEnded()) {
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        System.err.println("Error: " + e.getMessage());
+                    }
+                }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        buildSpecificTable(listImages, rows, PuzzleSelectionActivity.puzzleList.get(puzzleId));
+                        copyImage(listImages, resetImages);
+                        resetGameVariables();
+                        viewCounterMoves.setText("" + ShapeImage.getCounter());
+                        onAppearanceAnimations(allAnimations);
+                    }
+                });
+
+            }
+        }).start();
+    }
+    //Switch a puzzle
+    public static void switchPuzzle(){
+        animatePuzzleOut();
+        animatePuzzleIn();
+    }
 
 
     //Procedure when the player loose
@@ -380,6 +387,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 dlg2.dismiss();
+                resetGameVariables();
                 ((Activity)contextGameActivity).finish();
             }
         });

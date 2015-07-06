@@ -30,7 +30,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="you were&apos;nt able to solve the puzzle in the given amount of moves !"
+        android:text="you were not able to solve the puzzle in the given number of moves !"
         android:id="@+id/textView3"
         android:textColor="#ff000000"
         android:textSize="20sp"
