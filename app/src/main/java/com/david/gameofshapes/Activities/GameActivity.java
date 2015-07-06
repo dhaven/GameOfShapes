@@ -1,6 +1,7 @@
 package com.david.gameofshapes.Activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -8,10 +9,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -41,10 +45,10 @@ public class GameActivity extends Activity implements View.OnClickListener {
     public static int puzzleId;
     private static TextView numPuzzle;
     public static Context contextGameActivity;
-    public static AsyncTask<Integer,Void,Void> writeTask;
 
     public static TextView viewCounterMoves;
     public static int numMoves;
+    public static Animation disappearAnimation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -243,35 +247,56 @@ public class GameActivity extends Activity implements View.OnClickListener {
 
     //Procedure when the player win
     public static void winProcedure(){
-        //Show the failure image with it's animation
-        final ImageView successImage = new ImageView(contextGameActivity);
-        successImage.setImageResource(R.drawable.success_message);
-        successImage.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
-        tableLayout.addView(successImage);
+        AlertDialog dlg = successDialog();
+        dlg.show();
+        nextPuzzleId();
+        switchPuzzle();
 
-        final Handler handler = new Handler();
+    }
 
-        new Thread(new Runnable() {
+    public static AlertDialog successDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(contextGameActivity,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
+        LayoutInflater inflater = ((Activity)contextGameActivity).getLayoutInflater();
+        View v = inflater.inflate(R.layout.dialog_success, null);
+        builder.setView(v);
+        AlertDialog dlg = builder.create();
+        final AlertDialog dlg2 = dlg;
+        dlg.setCanceledOnTouchOutside(false);
+        dlg.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        dlg.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
+        Button nextPzl = (Button) v.findViewById(R.id.nextpzl);
+        nextPzl.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                try {
-                    Thread.sleep(1000);
-                }catch(InterruptedException e){
-                    System.err.println("Error: " + e.getMessage());
-                }
-                //Launch the next puzzle
-                handler.post(new Runnable() {
+            public void onClick(View v) {
+                dlg2.dismiss();
+                final Handler handler = new Handler();
+
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        tableLayout.removeView(successImage);
-                        nextPuzzleId();
-                        switchPuzzle();
+                        while (!disappearAnimation.hasEnded()) {
+                            try {
+                                Thread.sleep(200);
+                            } catch (InterruptedException e) {
+                                System.err.println("Error: " + e.getMessage());
+                            }
+                        }
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                buildSpecificTable(listImages, rows, PuzzleSelectionActivity.puzzleList.get(puzzleId));
+                                copyImage(listImages, resetImages);
+                                resetGameVariables();
+                                viewCounterMoves.setText("" + ShapeImage.getCounter());
+                                onAppearanceAnimations(allAnimations);
+                            }
+                        });
 
                     }
-                });
-
+                }).start();
             }
-        }).start();
+        });
+        return dlg;
     }
 
 
@@ -286,7 +311,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
 
         for(int i = 0; i < listImages.length; i++){
             for(int j = 0; j < listImages[i].length; j++){
-                Animation disappearAnimation = AnimationUtils.loadAnimation(contextGameActivity, R.anim.disappearance_animation);
+                disappearAnimation = AnimationUtils.loadAnimation(contextGameActivity, R.anim.disappearance_animation);
                 final int a = i;
                 final int b = j;
                 disappearAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -307,11 +332,6 @@ public class GameActivity extends Activity implements View.OnClickListener {
                                             rows[i].removeView(listImages[i][j].getImage());
                                         }
                                     }
-                                    buildSpecificTable(listImages, rows, PuzzleSelectionActivity.puzzleList.get(puzzleId));
-                                    onAppearanceAnimations(allAnimations);
-                                    copyImage(listImages, resetImages);
-                                    resetGameVariables();
-                                    viewCounterMoves.setText("" + ShapeImage.getCounter());
                                 }
                             }
                         });
@@ -333,37 +353,37 @@ public class GameActivity extends Activity implements View.OnClickListener {
 
     //Procedure when the player loose
     public static void looseProcedure(){
-        //Show the failure image with it's animation
-        ImageView failureImage = new ImageView(contextGameActivity);
-        failureImage.setImageResource(R.drawable.failure_message);
-        failureImage.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
-        tableLayout.addView(failureImage);
-        Animation failure_animation = AnimationUtils.loadAnimation(contextGameActivity, R.anim.loose_animation);
-        failureImage.startAnimation(failure_animation);
+        failDialog().show();
 
-        final long animationTime = failure_animation.computeDurationHint();
-        final Handler handler = new Handler();
+    }
 
-        new Thread(new Runnable() {
+    public static AlertDialog failDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(contextGameActivity,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
+        LayoutInflater inflater = ((Activity)contextGameActivity).getLayoutInflater();
+        View v = inflater.inflate(R.layout.dialog_fail, null);
+        builder.setView(v);
+        AlertDialog dlg = builder.create();
+        final AlertDialog dlg2 = dlg;
+        dlg.setCanceledOnTouchOutside(false);
+        dlg.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        dlg.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
+        Button retry = (Button) v.findViewById(R.id.retry);
+        Button quit = (Button) v.findViewById(R.id.quit);
+        retry.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                //Wait for the animation to end
-                try {
-                    Thread.sleep(animationTime + 500);
-                }catch(InterruptedException e){
-                    System.err.println("Error: " + e.getMessage());
-                }
-                //Reset the game
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        resetProc();
-                    }
-                });
-
+            public void onClick(View v) {
+                dlg2.dismiss();
+                resetProc();
             }
-        }).start();
-
+        });
+        quit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dlg2.dismiss();
+                ((Activity)contextGameActivity).finish();
+            }
+        });
+        return dlg;
     }
 
                              //  ***** ADDITIONNAL METHODS ******

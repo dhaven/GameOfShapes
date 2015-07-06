@@ -45,4 +45,13 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="dialog_animation">
+        <item name="android:windowEnterAnimation">@anim/abc_fade_in</item>
+
+
+        <item name="android:windowExitAnimation">@anim/abc_fade_out</item>
+
+
+    </style>
+
 </resources>
