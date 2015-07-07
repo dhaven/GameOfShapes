@@ -33,6 +33,7 @@ import com.david.gameofshapes.ShapeImage;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 
 public class GameActivity extends Activity implements View.OnClickListener {
@@ -45,6 +46,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
     public static int puzzleId;
     private static TextView numPuzzle;
     public static Context contextGameActivity;
+    private static Semaphore switchPuzzleSem = new Semaphore(1, true);
 
     public static TextView viewCounterMoves;
     public static int numMoves;
@@ -250,7 +252,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         AlertDialog dlg = successDialog();
         dlg.show();
         nextPuzzleId();
-        animatePuzzleOut();
+        animatePuzzleOut(false);
 
     }
 
@@ -276,7 +278,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
     }
 
 
-    public static void animatePuzzleOut(){
+    public static void animatePuzzleOut(final boolean direct){
         long delay = 0;
         int h = tableLayout.getHeight();
         int w = tableLayout.getWidth();
@@ -307,6 +309,10 @@ public class GameActivity extends Activity implements View.OnClickListener {
                                             rows[i].removeView(listImages[i][j].getImage());
                                         }
                                     }
+
+                                    if(direct == true){
+                                        animatePuzzleIn();
+                                    }
                                 }
                             }
                         });
@@ -324,6 +330,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
             }
         }
     }
+
     public static void animatePuzzleIn(){
         final Handler handler = new Handler();
 
@@ -345,16 +352,17 @@ public class GameActivity extends Activity implements View.OnClickListener {
                         resetGameVariables();
                         viewCounterMoves.setText("" + ShapeImage.getCounter());
                         onAppearanceAnimations(allAnimations);
+                        System.out.println("Puzzle in");
                     }
                 });
 
             }
         }).start();
     }
+
     //Switch a puzzle
     public static void switchPuzzle(){
-        animatePuzzleOut();
-        animatePuzzleIn();
+            animatePuzzleOut(true);
     }
 
 

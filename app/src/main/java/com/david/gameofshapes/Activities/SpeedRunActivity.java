@@ -63,6 +63,7 @@ public class SpeedRunActivity extends Activity{
 
         onAppearanceAnimations(allAnimations);
 
+        resetGameVariables();
         ShapeImage.setNumPenta(numberOfPentagones());
         timer.start();
     }
@@ -253,11 +254,6 @@ public class SpeedRunActivity extends Activity{
 
     //Procedure when the player win
     public static void winProcedure(){
-        //Show the failure image with it's animation
-        final ImageView successImage = new ImageView(contextGameActivity);
-        successImage.setImageResource(R.drawable.success_message);
-        successImage.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
-        tableLayout.addView(successImage);
 
         final Handler handler = new Handler();
 
@@ -273,7 +269,6 @@ public class SpeedRunActivity extends Activity{
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        tableLayout.removeView(successImage);
                         numberPuzzle++;
                         switchPuzzle();
 
@@ -306,42 +301,6 @@ public class SpeedRunActivity extends Activity{
         resetGameVariables();
     }
 
-
-    //Procedure when the player timer finished
-    public static void timerProcedure(){
-        //Show the failure image with it's animation
-        ImageView failureImage = new ImageView(contextGameActivity);
-        failureImage.setImageResource(R.drawable.failure_message);
-        failureImage.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
-        tableLayout.addView(failureImage);
-        Animation failure_animation = AnimationUtils.loadAnimation(contextGameActivity, R.anim.loose_animation);
-        failureImage.startAnimation(failure_animation);
-
-        final long animationTime = failure_animation.computeDurationHint();
-        final Handler handler = new Handler();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //Wait for the animation to end
-                try {
-                    Thread.sleep(animationTime + 500);
-                }catch(InterruptedException e){
-                    System.err.println("Error: " + e.getMessage());
-                }
-                //Reset the game
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        resetProc();
-                    }
-                });
-
-            }
-        }).start();
-
-    }
-
     //  ***** ADDITIONNAL METHODS ******
 
 
@@ -349,7 +308,7 @@ public class SpeedRunActivity extends Activity{
         resetProc();
     }
 
-    //Procedure when reseting the game
+    //Procedure when resetting the game
     public static void resetProc(){
         copyImage(resetImages,listImages);
         for(int i = 0; i < rows.length; i++){
