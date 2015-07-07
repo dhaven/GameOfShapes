@@ -78,7 +78,7 @@ public class MenuActivity extends Activity{
         protected ArrayList<Puzzle> doInBackground(String... params) {
             ShapesDbHelper myDbHelper = new ShapesDbHelper(getApplicationContext());
             SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
-            //myDbHelper.onUpgrade(myDb,1,2);
+            myDbHelper.onUpgrade(myDb,1,2); //uncomment to reset database
             return DbContract.PuzzlesTable.getAllPuzzles(myDb);
         }
         protected void onPostExecute(ArrayList<Puzzle> result) {

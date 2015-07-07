@@ -47,7 +47,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
     private static TextView numPuzzle;
     public static Context contextGameActivity;
     private static Semaphore switchPuzzleSem = new Semaphore(1, true);
-
+    public static ImageView stampSolved;
     public static TextView viewCounterMoves;
     public static int numMoves;
     public static Animation disappearAnimation;
@@ -58,6 +58,12 @@ public class GameActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.gamelayout);
 
         initializeVariables();
+
+        if(PuzzleSelectionActivity.puzzleList.get(puzzleId).getSolved() == 1){
+            stampSolved.setVisibility(View.VISIBLE);
+        }else{
+            stampSolved.setVisibility(View.INVISIBLE);
+        }
 
         buildSpecificTable(listImages, rows, PuzzleSelectionActivity.puzzleList.get(puzzleId));
         //buildSolvableTable(listImages,rows,4);
@@ -85,6 +91,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         rows = new TableRow[4];
         resetImages = new ShapeImage[4][4];
         allAnimations = new Flip3dAnimation[4][4];
+        stampSolved = (ImageView) findViewById(R.id.stamp);
         ImageView previous = (ImageView)findViewById(R.id.prev);
         ImageView next = (ImageView)findViewById(R.id.next);
         previous.setOnClickListener(this);
@@ -284,7 +291,6 @@ public class GameActivity extends Activity implements View.OnClickListener {
         int w = tableLayout.getWidth();
         tableLayout.setMinimumHeight(h);
         tableLayout.setMinimumWidth(w);
-        numPuzzle.setText("" + (puzzleId + 1));
 
         for(int i = 0; i < listImages.length; i++){
             for(int j = 0; j < listImages[i].length; j++){
@@ -332,6 +338,12 @@ public class GameActivity extends Activity implements View.OnClickListener {
     }
 
     public static void animatePuzzleIn(){
+        numPuzzle.setText("" + (puzzleId + 1));
+        if(PuzzleSelectionActivity.puzzleList.get(puzzleId).getSolved() == 1){
+            stampSolved.setVisibility(View.VISIBLE);
+        }else{
+            stampSolved.setVisibility(View.INVISIBLE);
+        }
         final Handler handler = new Handler();
 
         new Thread(new Runnable() {
