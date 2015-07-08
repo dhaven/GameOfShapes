@@ -170,6 +170,9 @@ public class SpeedRunActivity extends Activity{
         dlg.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         dlg.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
 
+        TextView text = (TextView) v.findViewById(R.id.scoreText);
+        text.setText("Puzzles resolved:" + (numberPuzzle-1));
+
         Button retry = (Button) v.findViewById(R.id.retry);
         retry.setOnClickListener(new View.OnClickListener() {
             @Override

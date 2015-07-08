@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Score"
-            android:id="@+id/score"
+            android:id="@+id/scoreTitle"
             android:layout_gravity="center"
             android:layout_marginLeft="20dp"
             android:textColor="#ff000000"
@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Score"
-        android:id="@+id/textView3"
+        android:id="@+id/scoreText"
         android:textColor="#ff000000"
         android:textSize="20sp"
         android:layout_gravity="center"
@@ -40,21 +40,72 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="20dp" />
 
-    <Button
-        android:layout_width="70dp"
-        android:layout_height="40dp"
-        android:text="QUIT"
-        android:id="@+id/quit"
-        android:layout_gravity="right"
-        android:background="@drawable/level"
-        android:layout_margin="10dp" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="20dp">
 
-    <Button
-        android:layout_width="70dp"
-        android:layout_height="40dp"
-        android:text="RETRY"
-        android:id="@+id/retry"
-        android:layout_gravity="right"
-        android:background="@drawable/level"
-        android:layout_margin="10dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Top scores :"
+            android:textColor="#ff000000"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1. 0 puzzles"
+            android:textColor="#ff000000"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2. 0 puzzles"
+            android:textColor="#ff000000"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3. 0 puzzles"
+            android:textColor="#ff000000"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:text="RETRY"
+            android:id="@+id/retry"
+            android:layout_gravity="right"
+            android:background="@drawable/level"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp"/>
+
+        <Button
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:text="QUIT"
+            android:id="@+id/quit"
+            android:layout_toLeftOf="@+id/retry"
+            android:layout_toStartOf="@+id/retry"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/level" />
+    </RelativeLayout>
+
 </LinearLayout>
