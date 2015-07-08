@@ -1,6 +1,7 @@
 package com.david.gameofshapes.Activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -8,10 +9,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,7 +40,7 @@ import java.util.Random;
 
 public class SpeedRunActivity extends Activity{
     private static TableLayout tableLayout;
-    private LinearLayout container;
+    private static LinearLayout container;
     private static TableRow[] rows;
     private static ShapeImage[][] listImages;
     private static ShapeImage[][] resetImages;
@@ -47,7 +51,7 @@ public class SpeedRunActivity extends Activity{
     public static boolean isSpeedRun = false;
     public static TextView timerView;
     public static Timer timer;
-    public long timeLimit = 60000; //60 seconds
+    public static long timeLimit = 60000; //60 seconds
 
 
     @Override
@@ -85,9 +89,26 @@ public class SpeedRunActivity extends Activity{
         timer = new Timer(timeLimit, timerView,onTimerExtinct());
     }
 
+    public static void retry(){
+        numberPuzzle = 1;
+        numPuzzle.setText(""+ numberPuzzle);
+        isSpeedRun = true;
+        timer = new Timer(timeLimit, timerView,onTimerExtinct());
+
+        buildSolvableTable(listImages,rows,4);
+
+        copyImage(listImages, resetImages);
+
+        onAppearanceAnimations(allAnimations);
+
+        resetGameVariables();
+        ShapeImage.setNumPenta(numberOfPentagones());
+        timer.start();
+    }
+
 
     //Methode executed when the timer is finished
-    public Timer.TimerListener onTimerExtinct(){
+    public static Timer.TimerListener onTimerExtinct(){
         ShapeImage.finish=true;
         return new Timer.TimerListener() {
             long delay = 0;
@@ -117,7 +138,10 @@ public class SpeedRunActivity extends Activity{
                                                 }
                                             }
                                             resetGameVariables();
+                                            AlertDialog dlg = scoreDialog();
+                                            dlg.show();
                                         }
+
                                     }
                                 });
                             }
@@ -133,6 +157,40 @@ public class SpeedRunActivity extends Activity{
                 }
             }
         };
+    }
+
+    public static AlertDialog scoreDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(contextGameActivity,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
+        LayoutInflater inflater = ((Activity)contextGameActivity).getLayoutInflater();
+        View v = inflater.inflate(R.layout.dialog_score, null);
+        builder.setView(v);
+        AlertDialog dlg = builder.create();
+        final AlertDialog dlg2 = dlg;
+        dlg.setCanceledOnTouchOutside(false);
+        dlg.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        dlg.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
+
+        Button retry = (Button) v.findViewById(R.id.retry);
+        retry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dlg2.dismiss();
+                retry();
+            }
+        });
+
+        Button quit = (Button) v.findViewById(R.id.quit);
+        quit.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                dlg2.dismiss();
+                resetGameVariables();
+                ((Activity)contextGameActivity).finish();
+            }
+        });
+
+        return dlg;
+
     }
 
     //********* CREATION OF THE PUZZLE ******
