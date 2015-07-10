@@ -51,18 +51,25 @@ public class GameActivity extends Activity implements View.OnClickListener {
     public static TextView viewCounterMoves;
     public static int numMoves;
     public static Animation disappearAnimation;
+    public static ImageView previous;
+    public static ImageView next;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gamelayout);
-
         initializeVariables();
 
         if(PuzzleSelectionActivity.puzzleList.get(puzzleId).getSolved() == 1){
             stampSolved.setVisibility(View.VISIBLE);
         }else{
             stampSolved.setVisibility(View.INVISIBLE);
+        }
+        if(puzzleId == 0){
+            previous.setVisibility(View.INVISIBLE);
+        }
+        if(puzzleId == PuzzleSelectionActivity.puzzleList.size()-1){
+            next.setVisibility(View.INVISIBLE);
         }
 
         buildSpecificTable(listImages, rows, PuzzleSelectionActivity.puzzleList.get(puzzleId));
@@ -92,8 +99,8 @@ public class GameActivity extends Activity implements View.OnClickListener {
         resetImages = new ShapeImage[4][4];
         allAnimations = new Flip3dAnimation[4][4];
         stampSolved = (ImageView) findViewById(R.id.stamp);
-        ImageView previous = (ImageView)findViewById(R.id.prev);
-        ImageView next = (ImageView)findViewById(R.id.next);
+        previous = (ImageView)findViewById(R.id.prev);
+        next = (ImageView)findViewById(R.id.next);
         previous.setOnClickListener(this);
         next.setOnClickListener(this);
     }
@@ -344,6 +351,11 @@ public class GameActivity extends Activity implements View.OnClickListener {
         }else{
             stampSolved.setVisibility(View.INVISIBLE);
         }
+        if(puzzleId == 0){previous.setVisibility(View.INVISIBLE);}
+        else {previous.setVisibility(View.VISIBLE);}
+        if(puzzleId == PuzzleSelectionActivity.puzzleList.size()-1){next.setVisibility(View.INVISIBLE);}
+        else{next.setVisibility(View.VISIBLE);}
+
         final Handler handler = new Handler();
 
         new Thread(new Runnable() {
@@ -360,6 +372,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
                     @Override
                     public void run() {
                         buildSpecificTable(listImages, rows, PuzzleSelectionActivity.puzzleList.get(puzzleId));
+                        onAppearanceAnimations(allAnimations);
                         copyImage(listImages, resetImages);
                         resetGameVariables();
                         viewCounterMoves.setText("" + ShapeImage.getCounter());

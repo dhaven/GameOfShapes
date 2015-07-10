@@ -66,7 +66,8 @@
             android:layout_toLeftOf="@+id/retry"
             android:layout_toStartOf="@+id/retry"
             android:layout_margin="10dp"
-            android:background="@drawable/level" />
+            android:background="@drawable/level"
+            android:layout_centerVertical="true" />
     </RelativeLayout>
 
 </LinearLayout>

@@ -13,8 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -44,15 +49,16 @@ public class SpeedRunActivity extends Activity{
     private static TableRow[] rows;
     private static ShapeImage[][] listImages;
     private static ShapeImage[][] resetImages;
-    private static Flip3dAnimation[][] allAnimations;
+    //private static Flip3dAnimation[][] allAnimations;
     public static int numberPuzzle;
     private static TextView numPuzzle;
-    public static Context contextGameActivity;
+    public static Context contextSpeedRunActivity;
     public static boolean isSpeedRun = false;
     public static TextView timerView;
     public static Timer timer;
     public static long timeLimit = 60000; //60 seconds
-
+    public static ImageView countDown;
+    public static boolean first;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,27 +71,40 @@ public class SpeedRunActivity extends Activity{
 
         copyImage(listImages, resetImages);
 
-        onAppearanceAnimations(allAnimations);
+        //onAppearanceAnimations(allAnimations);
 
         resetGameVariables();
         ShapeImage.setNumPenta(numberOfPentagones());
-        timer.start();
+        //timer.start();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if (first) {
+            countDown.startAnimation(startAnim(countDown,1));
+            first = false;
+        }
     }
 
     //Initialize the variables used by the activity
     public void initializeVariables(){
-        contextGameActivity = this;
-        tableLayout = (TableLayout) findViewById(R.id.grid);
-        container = (LinearLayout) findViewById(R.id.container);
-        numPuzzle = (TextView) findViewById(R.id.puzzleid);
+        contextSpeedRunActivity = this;
+        tableLayout = (TableLayout) findViewById(R.id.grid_s);
+        container = (LinearLayout) findViewById(R.id.container_s);
+        numPuzzle = (TextView) findViewById(R.id.numSolved);
         timerView = (TextView) findViewById(R.id.timer_view);
         numberPuzzle = 1;
-        numPuzzle.setText(""+ numberPuzzle);
+        numPuzzle.setText("" + numberPuzzle);
         listImages = new ShapeImage[4][4];
         rows = new TableRow[4];
         resetImages = new ShapeImage[4][4];
-        allAnimations = new Flip3dAnimation[4][4];
+        //allAnimations = new Flip3dAnimation[4][4];
         isSpeedRun = true;
+        first = true;
+        countDown = (ImageView) findViewById(R.id.countDown);
+        countDown.setVisibility(View.INVISIBLE);
         timer = new Timer(timeLimit, timerView,onTimerExtinct());
     }
 
@@ -95,16 +114,61 @@ public class SpeedRunActivity extends Activity{
         isSpeedRun = true;
         timer = new Timer(timeLimit, timerView,onTimerExtinct());
 
-        buildSolvableTable(listImages,rows,4);
+        buildSolvableTable(listImages, rows, 4);
 
         copyImage(listImages, resetImages);
 
-        onAppearanceAnimations(allAnimations);
+        //onAppearanceAnimations(allAnimations);
 
         resetGameVariables();
         ShapeImage.setNumPenta(numberOfPentagones());
         timer.start();
     }
+
+    public static AnimationSet startAnim(ImageView v, int num){
+        final int numAnim = num;
+        final ImageView view = v;
+        ScaleAnimation scaleUp = new ScaleAnimation(0.0f,1.0f,0.0f,1.0f,v.getPivotX(),v.getPivotY());
+        scaleUp.setDuration(800);
+        scaleUp.setInterpolator(new OvershootInterpolator());
+        scaleUp.setFillAfter(false);
+        AlphaAnimation fadeOut = new AlphaAnimation(1.0f,0.0f);
+        fadeOut.setDuration(500);
+        fadeOut.setFillAfter(false);
+        fadeOut.setInterpolator(new AccelerateInterpolator());
+        fadeOut.setStartOffset(500);
+        AnimationSet scaleFade = new AnimationSet(contextSpeedRunActivity,null);
+        scaleFade.addAnimation(scaleUp);
+        scaleFade.addAnimation(fadeOut);
+
+        scaleFade.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                //view.setVisibility(View.INVISIBLE);
+                if (numAnim == 1) {
+                    view.setImageResource(R.drawable.two);
+                    view.startAnimation(startAnim(view, numAnim + 1));
+                } else if (numAnim == 2) {
+                    view.setImageResource(R.drawable.one);
+                    view.startAnimation(startAnim(view, numAnim + 1));
+                } else {
+                    timer.start();
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        return scaleFade;
+    }
+    
 
 
     //Methode executed when the timer is finished
@@ -116,7 +180,7 @@ public class SpeedRunActivity extends Activity{
             public void run() {
                 for(int i = 0; i < listImages.length; i++){
                     for(int j = 0; j < listImages[i].length; j++){
-                        Animation disappearAnimation = AnimationUtils.loadAnimation(contextGameActivity, R.anim.disappearance_animation);
+                        Animation disappearAnimation = AnimationUtils.loadAnimation(contextSpeedRunActivity, R.anim.disappearance_animation);
                         final int a = i;
                         final int b = j;
                         disappearAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -160,8 +224,8 @@ public class SpeedRunActivity extends Activity{
     }
 
     public static AlertDialog scoreDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(contextGameActivity,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
-        LayoutInflater inflater = ((Activity)contextGameActivity).getLayoutInflater();
+        AlertDialog.Builder builder = new AlertDialog.Builder(contextSpeedRunActivity,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
+        LayoutInflater inflater = ((Activity)contextSpeedRunActivity).getLayoutInflater();
         View v = inflater.inflate(R.layout.dialog_score, null);
         builder.setView(v);
         AlertDialog dlg = builder.create();
@@ -188,7 +252,7 @@ public class SpeedRunActivity extends Activity{
             public void onClick(View v) {
                 dlg2.dismiss();
                 resetGameVariables();
-                ((Activity)contextGameActivity).finish();
+                ((Activity)contextSpeedRunActivity).finish();
             }
         });
 
@@ -201,10 +265,10 @@ public class SpeedRunActivity extends Activity{
     //to keep for speedrun
     public static void buildSolvableTable(ShapeImage[][] listImages, TableRow[] rows, int numMoves){
         for(int i = 0; i < listImages.length;i++) {
-            rows[i] = new TableRow(contextGameActivity);
+            rows[i] = new TableRow(contextSpeedRunActivity);
             rows[i].setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
             for (int j = 0; j < listImages[0].length; j++) {
-                listImages[i][j] = new ShapeImage(contextGameActivity,"penta");
+                listImages[i][j] = new ShapeImage(contextSpeedRunActivity,"penta");
                 rows[i].addView(listImages[i][j].getImage());
             }
             tableLayout.addView(rows[i]);
@@ -377,7 +441,7 @@ public class SpeedRunActivity extends Activity{
         }
         tableLayout.removeAllViews();
         for(int i = 0; i < listImages.length; i++){
-            rows[i] = new TableRow(contextGameActivity);
+            rows[i] = new TableRow(contextSpeedRunActivity);
             rows[i].setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
             for(int j = 0; j < listImages[0].length; j++){
                 rows[i].addView(listImages[i][j].getImage());
@@ -412,7 +476,7 @@ public class SpeedRunActivity extends Activity{
     public static void copyImage(ShapeImage[][] in, ShapeImage[][] out){
         for(int i = 0; i < in.length; i++){
             for(int j = 0; j < in[0].length; j++){
-                out[i][j] = new ShapeImage(contextGameActivity,in[i][j].imgToString(in[i][j].getImage()));
+                out[i][j] = new ShapeImage(contextSpeedRunActivity,in[i][j].imgToString(in[i][j].getImage()));
             }
         }
         setAdjacency(out);
