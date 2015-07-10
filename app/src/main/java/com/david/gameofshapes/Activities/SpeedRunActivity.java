@@ -47,8 +47,11 @@ public class SpeedRunActivity extends Activity{
     private static TableLayout tableLayout;
     private static LinearLayout container;
     private static TableRow[] rows;
+    private static TableRow[] rowsAsync;
     private static ShapeImage[][] listImages;
+    private static ShapeImage[][] listImagesAsync;
     private static ShapeImage[][] resetImages;
+    private static ShapeImage[][] resetImagesAsync;
     //private static Flip3dAnimation[][] allAnimations;
     public static int numberPuzzle;
     private static TextView numPuzzle;
@@ -69,13 +72,19 @@ public class SpeedRunActivity extends Activity{
 
         buildSolvableTable(listImages,rows,4);
 
+        for(int i=0; i < listImages[0].length;i++){
+            tableLayout.addView(rows[i]);
+        }
+
         copyImage(listImages, resetImages);
 
         //onAppearanceAnimations(allAnimations);
 
         resetGameVariables();
         ShapeImage.setNumPenta(numberOfPentagones());
-        //timer.start();
+
+        AsyncTask<Void,Void,Void> writeTask = new NewPuzzleTask();
+        writeTask.execute();
     }
 
     @Override
@@ -83,7 +92,7 @@ public class SpeedRunActivity extends Activity{
         super.onWindowFocusChanged(hasFocus);
 
         if (first) {
-            countDown.startAnimation(startAnim(countDown,1));
+            countDown.startAnimation(startAnim(countDown,1,true));
             first = false;
         }
     }
@@ -98,8 +107,11 @@ public class SpeedRunActivity extends Activity{
         numberPuzzle = 1;
         numPuzzle.setText("" + numberPuzzle);
         listImages = new ShapeImage[4][4];
+        listImagesAsync = new ShapeImage[4][4];
         rows = new TableRow[4];
+        rowsAsync = new TableRow[4];
         resetImages = new ShapeImage[4][4];
+        resetImagesAsync = new ShapeImage[4][4];
         //allAnimations = new Flip3dAnimation[4][4];
         isSpeedRun = true;
         first = true;
@@ -125,21 +137,24 @@ public class SpeedRunActivity extends Activity{
         timer.start();
     }
 
-    public static AnimationSet startAnim(ImageView v, int num){
+    public static AnimationSet startAnim(ImageView v, int num,boolean startOffset){
         final int numAnim = num;
         final ImageView view = v;
         ScaleAnimation scaleUp = new ScaleAnimation(0.0f,1.0f,0.0f,1.0f,v.getPivotX(),v.getPivotY());
         scaleUp.setDuration(800);
-        scaleUp.setInterpolator(new OvershootInterpolator());
-        scaleUp.setFillAfter(false);
+        scaleUp.setFillAfter(true);
         AlphaAnimation fadeOut = new AlphaAnimation(1.0f,0.0f);
-        fadeOut.setDuration(500);
+        fadeOut.setDuration(400);
         fadeOut.setFillAfter(false);
         fadeOut.setInterpolator(new AccelerateInterpolator());
-        fadeOut.setStartOffset(500);
+        fadeOut.setStartOffset(400);
         AnimationSet scaleFade = new AnimationSet(contextSpeedRunActivity,null);
+        scaleFade.setInterpolator(new OvershootInterpolator(2f));
         scaleFade.addAnimation(scaleUp);
         scaleFade.addAnimation(fadeOut);
+        if(startOffset){
+            scaleFade.setStartOffset(300);
+        }
 
         scaleFade.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -152,10 +167,10 @@ public class SpeedRunActivity extends Activity{
                 //view.setVisibility(View.INVISIBLE);
                 if (numAnim == 1) {
                     view.setImageResource(R.drawable.two);
-                    view.startAnimation(startAnim(view, numAnim + 1));
+                    view.startAnimation(startAnim(view, numAnim + 1,false));
                 } else if (numAnim == 2) {
                     view.setImageResource(R.drawable.one);
-                    view.startAnimation(startAnim(view, numAnim + 1));
+                    view.startAnimation(startAnim(view, numAnim + 1,false));
                 } else {
                     timer.start();
                 }
@@ -271,7 +286,6 @@ public class SpeedRunActivity extends Activity{
                 listImages[i][j] = new ShapeImage(contextSpeedRunActivity,"penta");
                 rows[i].addView(listImages[i][j].getImage());
             }
-            tableLayout.addView(rows[i]);
         }
         setAdjacency(listImages);
         Random random = new Random();
@@ -386,7 +400,7 @@ public class SpeedRunActivity extends Activity{
             @Override
             public void run() {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(300);
                 }catch(InterruptedException e){
                     System.err.println("Error: " + e.getMessage());
                 }
@@ -414,15 +428,28 @@ public class SpeedRunActivity extends Activity{
         tableLayout.setMinimumWidth(w);
         numPuzzle.setText(""+numberPuzzle);
 
-        for(int i = 0; i < listImages.length; i++){
+        listImages = listImagesAsync;
+        resetImages = resetImagesAsync;
+        tableLayout.removeAllViews();
+        for(int i=0; i < listImages[0].length; i++){
+            tableLayout.addView(rowsAsync[i]);
+        }
+        /**for(int i = 0; i < listImages.length; i++){
             for(int j = 0; j < listImages[i].length; j++){
                 listImages[i][j].getImage().setAlpha(0f);
                  rows[i].removeView(listImages[i][j].getImage());
             }
-        }
+        }**/
+        listImagesAsync = new ShapeImage[4][4];
+        resetImagesAsync = new ShapeImage[4][4];
+        rowsAsync = new TableRow[4];
 
-        buildSolvableTable(listImages,rows,4);
-        copyImage(listImages, resetImages);
+        //buildSolvableTable(listImages,rows,4);
+        //copyImage(listImages, resetImages);
+
+        AsyncTask<Void,Void,Void> writeTask = new NewPuzzleTask();
+        writeTask.execute();
+
         resetGameVariables();
     }
 
@@ -488,5 +515,15 @@ public class SpeedRunActivity extends Activity{
         timer.cancel();
 
         super.onBackPressed();
+    }
+
+    private static class NewPuzzleTask extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            buildSolvableTable(listImagesAsync,rowsAsync,4);
+            copyImage(listImagesAsync, resetImagesAsync);
+            return null;
+        }
     }
 }
