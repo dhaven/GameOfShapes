@@ -40,7 +40,7 @@ public class ShapeImage {
     public static boolean finish = false;
     public static boolean win = false;
 
-    private View.OnClickListener click = new View.OnClickListener() {
+    public View.OnClickListener click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             ImageButton shape = (ImageButton) v;

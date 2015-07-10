@@ -75,6 +75,11 @@ public class SpeedRunActivity extends Activity{
         for(int i=0; i < listImages[0].length;i++){
             tableLayout.addView(rows[i]);
         }
+        for(int i=0; i<listImages.length;i++){
+            for(int j=0; j<listImages[0].length;j++){
+                listImages[i][j].getImage().setOnClickListener(null);
+            }
+        }
 
         copyImage(listImages, resetImages);
 
@@ -104,7 +109,7 @@ public class SpeedRunActivity extends Activity{
         container = (LinearLayout) findViewById(R.id.container_s);
         numPuzzle = (TextView) findViewById(R.id.numSolved);
         timerView = (TextView) findViewById(R.id.timer_view);
-        numberPuzzle = 1;
+        numberPuzzle = 0;
         numPuzzle.setText("" + numberPuzzle);
         listImages = new ShapeImage[4][4];
         listImagesAsync = new ShapeImage[4][4];
@@ -121,20 +126,32 @@ public class SpeedRunActivity extends Activity{
     }
 
     public static void retry(){
-        numberPuzzle = 1;
+        numberPuzzle = 0;
         numPuzzle.setText(""+ numberPuzzle);
         isSpeedRun = true;
         timer = new Timer(timeLimit, timerView,onTimerExtinct());
 
-        buildSolvableTable(listImages, rows, 4);
+        //buildSolvableTable(listImages, rows, 4);
 
-        copyImage(listImages, resetImages);
+        //copyImage(listImages, resetImages);
 
         //onAppearanceAnimations(allAnimations);
 
         resetGameVariables();
         ShapeImage.setNumPenta(numberOfPentagones());
-        timer.start();
+        switchPuzzle();
+        for(int i=0; i<listImages.length;i++){
+            for(int j=0; j<listImages[0].length;j++){
+                listImages[i][j].getImage().setOnClickListener(null);
+            }
+        }
+        first = true;
+        if (first) {
+            countDown.setImageResource(R.drawable.three);
+            countDown.startAnimation(startAnim(countDown,1,true));
+            first = false;
+        }
+        //timer.start();
     }
 
     public static AnimationSet startAnim(ImageView v, int num,boolean startOffset){
@@ -172,6 +189,11 @@ public class SpeedRunActivity extends Activity{
                     view.setImageResource(R.drawable.one);
                     view.startAnimation(startAnim(view, numAnim + 1,false));
                 } else {
+                    for(int i=0; i<listImages.length;i++){
+                        for(int j=0; j<listImages[0].length;j++){
+                            listImages[i][j].getImage().setOnClickListener(listImages[i][j].click);
+                        }
+                    }
                     timer.start();
                 }
             }
@@ -193,6 +215,11 @@ public class SpeedRunActivity extends Activity{
             long delay = 0;
             @Override
             public void run() {
+                for(int i=0; i<listImages.length;i++){
+                    for(int j=0; j<listImages[0].length;j++){
+                        listImages[i][j].getImage().setOnClickListener(null);
+                    }
+                }
                 for(int i = 0; i < listImages.length; i++){
                     for(int j = 0; j < listImages[i].length; j++){
                         Animation disappearAnimation = AnimationUtils.loadAnimation(contextSpeedRunActivity, R.anim.disappearance_animation);
@@ -250,7 +277,7 @@ public class SpeedRunActivity extends Activity{
         dlg.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
 
         TextView text = (TextView) v.findViewById(R.id.scoreText);
-        text.setText("Puzzles resolved:" + (numberPuzzle-1));
+        text.setText("Puzzles solved:" + (numberPuzzle));
 
         Button retry = (Button) v.findViewById(R.id.retry);
         retry.setOnClickListener(new View.OnClickListener() {
