@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
+import com.david.gameofshapes.Highscore;
 import com.david.gameofshapes.Puzzle;
 
 import java.util.ArrayList;
@@ -65,7 +66,30 @@ public class DbContract {
             db.close();
             return puzzles;
         }
+    }
 
+    public static abstract class HighscoresTable implements BaseColumns {
+        public static final String TABNAME = "Highscores";
+        public static final String COLUMN_NAME_NAME = "Name";
+        public static final String COLUMN_NAME_SCORE = "Score";
+        public static final String[] COLUMN_NAMES = {"Name","Score"};
 
+        public static final String HIGHSCORESTABLE_CREATE = "CREATE TABLE " + TABNAME + " (Name varchar(3) NOT NULL, Score integer(2) NOT NULL);";
+
+        public static ArrayList<Highscore> getTopN(SQLiteDatabase db,int n){
+            String name;
+            int score;
+            ArrayList<Highscore> highscores = new ArrayList<Highscore>();
+            Cursor cursor = db.query(TABNAME,COLUMN_NAMES,null,null,null,null,COLUMN_NAME_SCORE + " DESC");
+            cursor.moveToFirst();
+            for(int i=0; i<n && !cursor.isAfterLast(); i++) {
+                name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_NAME));
+                score = cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_SCORE));
+                highscores.add(new Highscore(name,score));
+                cursor.moveToNext();
+            }
+            db.close();
+            return highscores;
+        }
     }
 }

@@ -21,6 +21,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 import com.david.gameofshapes.Animations.Flip3dAnimation;
 import com.david.gameofshapes.Database.DbContract;
 import com.david.gameofshapes.Database.ShapesDbHelper;
+import com.david.gameofshapes.Highscore;
 import com.david.gameofshapes.Puzzle;
 import com.david.gameofshapes.R;
 import com.david.gameofshapes.ShapeImage;
@@ -63,6 +65,8 @@ public class SpeedRunActivity extends Activity{
     public static ImageView countDown;
     public static boolean first;
 
+    public static ArrayList<Highscore> highscores;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +94,8 @@ public class SpeedRunActivity extends Activity{
 
         AsyncTask<Void,Void,Void> writeTask = new NewPuzzleTask();
         writeTask.execute();
+
+        new LoadHighscores().execute(3);
     }
 
     @Override
@@ -270,6 +276,7 @@ public class SpeedRunActivity extends Activity{
         LayoutInflater inflater = ((Activity)contextSpeedRunActivity).getLayoutInflater();
         View v = inflater.inflate(R.layout.dialog_score, null);
         builder.setView(v);
+
         AlertDialog dlg = builder.create();
         final AlertDialog dlg2 = dlg;
         dlg.setCanceledOnTouchOutside(false);
@@ -278,11 +285,37 @@ public class SpeedRunActivity extends Activity{
 
         TextView text = (TextView) v.findViewById(R.id.scoreText);
         text.setText("Puzzles solved:" + (numberPuzzle));
-
+        TextView top1 = (TextView) v.findViewById(R.id.top1);
+        TextView top2 = (TextView) v.findViewById(R.id.top2);
+        TextView top3 = (TextView) v.findViewById(R.id.top3);
+        if(highscores.size() > 2){
+            top1.setText("1." + highscores.get(0).getName()+ " - " + highscores.get(0).getScore() + " puzzles");
+            top2.setText("2." + highscores.get(1).getName()+ " - " + highscores.get(1).getScore() + " puzzles");
+            top3.setText("3." + highscores.get(2).getName()+ " - " + highscores.get(2).getScore() + " puzzles");
+        }else if(highscores.size() > 1){
+            top1.setText("1." + highscores.get(0).getName()+ " - " + highscores.get(0).getScore() + " puzzles");
+            top2.setText("2." + highscores.get(1).getName()+ " - " + highscores.get(1).getScore() + " puzzles");
+            top3.setText("3. no score");
+        }else if(highscores.size() > 0){
+            top1.setText("1." + highscores.get(0).getName()+ " - " + highscores.get(0).getScore() + " puzzles");
+            top2.setText("2. no score");
+            top3.setText("3. no score");
+        }else{
+            top1.setText("1. no score");
+            top2.setText("2. no score");
+            top3.setText("3. no score");
+        }
+        final EditText newName = (EditText) v.findViewById(R.id.newName);
         Button retry = (Button) v.findViewById(R.id.retry);
         retry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String name = newName.getText().toString();
+                if(name == null || name.equals("")){
+                    new WriteDataTask().execute("no name",""+numberPuzzle);
+                }else{
+                    new WriteDataTask().execute(name,""+numberPuzzle);
+                }
                 dlg2.dismiss();
                 retry();
             }
@@ -292,8 +325,15 @@ public class SpeedRunActivity extends Activity{
         quit.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                String name = newName.getText().toString();
+                if(name == null){
+                    new WriteDataTask().execute("no name",""+numberPuzzle);
+                }else{
+                    new WriteDataTask().execute(name,""+numberPuzzle);
+                }
                 dlg2.dismiss();
                 resetGameVariables();
+                isSpeedRun = false;
                 ((Activity)contextSpeedRunActivity).finish();
             }
         });
@@ -550,6 +590,36 @@ public class SpeedRunActivity extends Activity{
         protected Void doInBackground(Void... params) {
             buildSolvableTable(listImagesAsync,rowsAsync,4);
             copyImage(listImagesAsync, resetImagesAsync);
+            return null;
+        }
+    }
+
+    private static class LoadHighscores extends AsyncTask<Integer,Void,ArrayList<Highscore>> {
+
+        @Override
+        protected ArrayList<Highscore> doInBackground(Integer... params) {
+            ShapesDbHelper myDbHelper = new ShapesDbHelper(contextSpeedRunActivity);
+            SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
+            return DbContract.HighscoresTable.getTopN(myDb,params[0].intValue());
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Highscore> result) {
+            highscores = result;
+        }
+    }
+
+    private static class WriteDataTask extends AsyncTask<String,Void,Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+
+            ShapesDbHelper myDbHelper = new ShapesDbHelper(contextSpeedRunActivity);
+            SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(DbContract.HighscoresTable.COLUMN_NAME_NAME,params[0]);
+            values.put(DbContract.HighscoresTable.COLUMN_NAME_SCORE,Integer.parseInt(params[1]));
+            long count = myDb.insert(DbContract.HighscoresTable.TABNAME, null, values);
             return null;
         }
     }

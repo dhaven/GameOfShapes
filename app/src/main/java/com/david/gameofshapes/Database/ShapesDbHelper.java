@@ -22,11 +22,13 @@ public class ShapesDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DbContract.PuzzlesTable.PUZZLESTABLE_CREATE);
         DbContract.PuzzlesTable.insertPuzzles(db);
+        db.execSQL(DbContract.HighscoresTable.HIGHSCORESTABLE_CREATE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS Puzzles;");
+        db.execSQL("DROP TABLE IF EXISTS Highscores;");
         onCreate(db);
     }
 }

@@ -78,8 +78,8 @@ public class GameActivity extends Activity implements View.OnClickListener {
         copyImage(listImages, resetImages);
 
         onAppearanceAnimations(allAnimations);
-
-        ShapeImage.setNumPenta(numberOfPentagones());
+        resetGameVariables();
+        //ShapeImage.setNumPenta(numberOfPentagones());
     }
 
     //Initialize the variables used by the activity
