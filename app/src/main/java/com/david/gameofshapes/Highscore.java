@@ -3,7 +3,7 @@ package com.david.gameofshapes;
 /**
  * Created by david on 11/07/2015.
  */
-public class Highscore {
+public class Highscore implements Comparable<Highscore>{
     private String name;
     private int score;
 
@@ -26,5 +26,16 @@ public class Highscore {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    @Override
+    public int compareTo(Highscore another) {
+        if(this.getScore() < another.getScore()){
+            return -1;
+        }else if(this.getScore() > another.getScore()){
+            return 1;
+        }else{
+            return 0;
+        }
     }
 }

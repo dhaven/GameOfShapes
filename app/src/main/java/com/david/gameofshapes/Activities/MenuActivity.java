@@ -71,6 +71,12 @@ public class MenuActivity extends Activity{
         startActivity(intent);
     }
 
+    public void resetHighscores(View view){
+        ShapesDbHelper myDbHelper = new ShapesDbHelper(getApplicationContext());
+        SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
+        myDbHelper.onUpgrade(myDb,1,2);
+    }
+
     private class LoadDataTask extends AsyncTask<String,Void,ArrayList<Puzzle>> {
 
 

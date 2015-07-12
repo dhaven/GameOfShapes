@@ -9,8 +9,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.InputFilter;
+import android.text.InputType;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
@@ -42,7 +47,12 @@ import com.david.gameofshapes.Timer;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
+
+import static com.david.gameofshapes.ShapeImage.convertDpToPx;
 
 
 public class SpeedRunActivity extends Activity{
@@ -61,9 +71,11 @@ public class SpeedRunActivity extends Activity{
     public static boolean isSpeedRun = false;
     public static TextView timerView;
     public static Timer timer;
-    public static long timeLimit = 60000; //60 seconds
+    public static long timeLimit = 10000; //60 seconds
     public static ImageView countDown;
     public static boolean first;
+    public static int nameId;
+    public static View v;
 
     public static ArrayList<Highscore> highscores;
 
@@ -129,11 +141,12 @@ public class SpeedRunActivity extends Activity{
         countDown = (ImageView) findViewById(R.id.countDown);
         countDown.setVisibility(View.INVISIBLE);
         timer = new Timer(timeLimit, timerView,onTimerExtinct());
+        nameId = 1;
     }
 
     public static void retry(){
         numberPuzzle = 0;
-        numPuzzle.setText(""+ numberPuzzle);
+        numPuzzle.setText("" + numberPuzzle);
         isSpeedRun = true;
         timer = new Timer(timeLimit, timerView,onTimerExtinct());
 
@@ -274,7 +287,7 @@ public class SpeedRunActivity extends Activity{
     public static AlertDialog scoreDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(contextSpeedRunActivity,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
         LayoutInflater inflater = ((Activity)contextSpeedRunActivity).getLayoutInflater();
-        View v = inflater.inflate(R.layout.dialog_score, null);
+        v = inflater.inflate(R.layout.dialog_score, null);
         builder.setView(v);
 
         AlertDialog dlg = builder.create();
@@ -283,41 +296,42 @@ public class SpeedRunActivity extends Activity{
         dlg.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         dlg.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
 
-        TextView text = (TextView) v.findViewById(R.id.scoreText);
-        text.setText("Puzzles solved:" + (numberPuzzle));
-        TextView top1 = (TextView) v.findViewById(R.id.top1);
-        TextView top2 = (TextView) v.findViewById(R.id.top2);
-        TextView top3 = (TextView) v.findViewById(R.id.top3);
-        if(highscores.size() > 2){
-            top1.setText("1." + highscores.get(0).getName()+ " - " + highscores.get(0).getScore() + " puzzles");
-            top2.setText("2." + highscores.get(1).getName()+ " - " + highscores.get(1).getScore() + " puzzles");
-            top3.setText("3." + highscores.get(2).getName()+ " - " + highscores.get(2).getScore() + " puzzles");
-        }else if(highscores.size() > 1){
-            top1.setText("1." + highscores.get(0).getName()+ " - " + highscores.get(0).getScore() + " puzzles");
-            top2.setText("2." + highscores.get(1).getName()+ " - " + highscores.get(1).getScore() + " puzzles");
-            top3.setText("3. no score");
-        }else if(highscores.size() > 0){
-            top1.setText("1." + highscores.get(0).getName()+ " - " + highscores.get(0).getScore() + " puzzles");
-            top2.setText("2. no score");
-            top3.setText("3. no score");
-        }else{
-            top1.setText("1. no score");
-            top2.setText("2. no score");
-            top3.setText("3. no score");
-        }
-        final EditText newName = (EditText) v.findViewById(R.id.newName);
+        int ret = Collections.binarySearch(highscores, new Highscore("", numberPuzzle));
+        int index = Math.abs(ret + 1);
+        final int index2 = index;
+        LinearLayout topScores = (LinearLayout) v.findViewById(R.id.topScores);
+        topScores.setGravity(Gravity.CENTER_HORIZONTAL);
+        final LinearLayout score2 = topScores;
+        topScores.removeAllViews();
+        TextView title = new TextView(contextSpeedRunActivity);
+        LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layout.topMargin = convertDpToPx(10, (Activity) contextSpeedRunActivity);
+        layout.bottomMargin = convertDpToPx(10, (Activity) contextSpeedRunActivity);
+        title.setLayoutParams(layout);
+        title.setText("Top scores");
+        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25);
+        topScores.addView(title);
+        updateScoreBoard(topScores, index);
         Button retry = (Button) v.findViewById(R.id.retry);
         retry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String name = newName.getText().toString();
-                if(name == null || name.equals("")){
-                    new WriteDataTask().execute("no name",""+numberPuzzle);
+                EditText newName = (EditText) score2.findViewById(nameId);
+                if(newName == null){
+                    dlg2.dismiss();
+                    retry();
                 }else{
-                    new WriteDataTask().execute(name,""+numberPuzzle);
+                    String name = newName.getText().toString();
+                    if(name == null || name.equals("")){
+                        new WriteDataTask().execute("no name", "" + numberPuzzle);
+                        highscores.add(index2, new Highscore("no name", numberPuzzle));
+                    }else{
+                        new WriteDataTask().execute(name, "" + numberPuzzle);
+                        highscores.add(index2,new Highscore(name, numberPuzzle));
+                    }
+                    dlg2.dismiss();
+                    retry();
                 }
-                dlg2.dismiss();
-                retry();
             }
         });
 
@@ -325,22 +339,203 @@ public class SpeedRunActivity extends Activity{
         quit.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                String name = newName.getText().toString();
-                if(name == null){
-                    new WriteDataTask().execute("no name",""+numberPuzzle);
+                EditText newName = (EditText) score2.findViewById(nameId);
+                if(newName == null){
+                    dlg2.dismiss();
+                    resetGameVariables();
+                    isSpeedRun = false;
+                    ((Activity)contextSpeedRunActivity).finish();
                 }else{
-                    new WriteDataTask().execute(name,""+numberPuzzle);
+                    String name = newName.getText().toString();
+                    if(name == null || name.equals("")){
+                        new WriteDataTask().execute("no name",""+numberPuzzle);
+                        highscores.add(index2,new Highscore("no name", numberPuzzle));
+                    }else{
+                        new WriteDataTask().execute(name,""+numberPuzzle);
+                        highscores.add(index2,new Highscore(name, numberPuzzle));
+                    }
+                    dlg2.dismiss();
+                    resetGameVariables();
+                    isSpeedRun = false;
+                    ((Activity)contextSpeedRunActivity).finish();
                 }
-                dlg2.dismiss();
-                resetGameVariables();
-                isSpeedRun = false;
-                ((Activity)contextSpeedRunActivity).finish();
             }
         });
 
         return dlg;
 
     }
+
+    public static void updateScoreBoard(LinearLayout topScores, int index){
+        int size = highscores.size();
+        if(index == size){
+            LinearLayout top1 = createScoreLayout(1);
+            topScores.addView(top1);
+            if(size >= 2){
+                Highscore high2 = highscores.get(size-1);
+                Highscore high3 = highscores.get(size-2);
+                TextView top2 = new TextView(contextSpeedRunActivity);
+                top2.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                top2.setText("2. " + high2.getName() + " - " + high2.getScore() + " puzzles");
+                top2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                top2.setGravity(Gravity.CENTER_HORIZONTAL);
+                topScores.addView(top2);
+                TextView top3 = new TextView(contextSpeedRunActivity);
+                top3.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                top3.setText("3. " + high3.getName() + " - " + high3.getScore() + " puzzles");
+                top3.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                top3.setGravity(Gravity.CENTER_HORIZONTAL);
+                topScores.addView(top3);
+            }else if(size >= 1){
+                Highscore high2 = highscores.get(size-1);
+                TextView top2 = new TextView(contextSpeedRunActivity);
+                top2.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                top2.setText("2. " + high2.getName() + " - " + high2.getScore() + " puzzles");
+                top2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                top2.setGravity(Gravity.CENTER_HORIZONTAL);
+                topScores.addView(top2);
+                TextView top3 = new TextView(contextSpeedRunActivity);
+                top3.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                top3.setText("3. No score ");
+                top3.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                top3.setGravity(Gravity.CENTER_HORIZONTAL);
+                topScores.addView(top3);
+            }else{
+                TextView top2 = new TextView(contextSpeedRunActivity);
+                top2.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                top2.setText("2. No score ");
+                top2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                top2.setGravity(Gravity.CENTER_HORIZONTAL);
+                topScores.addView(top2);
+                TextView top3 = new TextView(contextSpeedRunActivity);
+                top3.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                top3.setText("3. No score ");
+                top3.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                top3.setGravity(Gravity.CENTER_HORIZONTAL);
+                topScores.addView(top3);
+            }
+
+        }else if(index == size-1){
+            Highscore high1 = highscores.get(size-1);
+            TextView top1 = new TextView(contextSpeedRunActivity);
+            top1.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            top1.setText("1. " + high1.getName() + " - " + high1.getScore() + " puzzles");
+            top1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+            top1.setGravity(Gravity.CENTER_HORIZONTAL);
+            topScores.addView(top1);
+            LinearLayout top2 = createScoreLayout(2);
+            topScores.addView(top2);
+            TextView top3 = new TextView(contextSpeedRunActivity);
+            top3.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            if(size >= 2){
+                Highscore high3 = highscores.get(size-2);
+                top3.setText("3. " + high3.getName() + " - " + high3.getScore() + " puzzles");
+            }else{
+                top3.setText("3. No score");
+            }
+            top3.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+            top3.setGravity(Gravity.CENTER_HORIZONTAL);
+            topScores.addView(top3);
+
+        }else if(index == size-2){
+            Highscore high1 = highscores.get(size-1);
+            Highscore high2 = highscores.get(size-2);
+            TextView top1 = new TextView(contextSpeedRunActivity);
+            top1.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            top1.setText("1. " + high1.getName() + " - " + high1.getScore() + " puzzles");
+            top1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+            top1.setGravity(Gravity.CENTER_HORIZONTAL);
+            topScores.addView(top1);
+            TextView top2 = new TextView(contextSpeedRunActivity);
+            top2.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            top2.setText("2. " + high2.getName() + " - " + high2.getScore() + " puzzles");
+            top2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+            top2.setGravity(Gravity.CENTER_HORIZONTAL);
+            topScores.addView(top2);
+            LinearLayout top3 = createScoreLayout(3);
+            topScores.addView(top3);
+        }else if(size-index+1 > 10) {
+            Highscore high1 = highscores.get(size-1);
+            Highscore high2 = highscores.get(size-2);
+            Highscore high3 = highscores.get(size-3);
+            TextView top1 = new TextView(contextSpeedRunActivity);
+            top1.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            top1.setText("1. " + high1.getName() + " - " + high1.getScore() + " puzzles");
+            top1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+            top1.setGravity(Gravity.CENTER_HORIZONTAL);
+            topScores.addView(top1);
+            TextView top2 = new TextView(contextSpeedRunActivity);
+            top2.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            top2.setText("2. " + high2.getName() + " - " + high2.getScore() + " puzzles");
+            top2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+            top2.setGravity(Gravity.CENTER_HORIZONTAL);
+            topScores.addView(top2);
+            TextView top3 = new TextView(contextSpeedRunActivity);
+            top3.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            top3.setText("3. " + high3.getName() + " - " + high3.getScore() + " puzzles");
+            top3.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+            top3.setGravity(Gravity.CENTER_HORIZONTAL);
+            topScores.addView(top3);
+            ImageView img = (ImageView) v.findViewById(R.id.scoreImg);
+            img.setImageResource(R.drawable.not_fast_enough);
+        }else{
+                Highscore high1 = highscores.get(size-1);
+                Highscore high2 = highscores.get(size-2);
+                Highscore high3 = highscores.get(size-3);
+                TextView top1 = new TextView(contextSpeedRunActivity);
+                top1.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                top1.setText("1. " + high1.getName() + " - " + high1.getScore() + " puzzles");
+                top1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                top1.setGravity(Gravity.CENTER_HORIZONTAL);
+                topScores.addView(top1);
+                TextView top2 = new TextView(contextSpeedRunActivity);
+                top2.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                top2.setText("2. " + high2.getName() + " - " + high2.getScore() + " puzzles");
+                top2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                top2.setGravity(Gravity.CENTER_HORIZONTAL);
+                topScores.addView(top2);
+                TextView top3 = new TextView(contextSpeedRunActivity);
+                top3.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                top3.setText("3. " + high3.getName() + " - " + high3.getScore() + " puzzles");
+                top3.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                top3.setGravity(Gravity.CENTER_HORIZONTAL);
+                topScores.addView(top3);
+                LinearLayout top4 = createScoreLayout(size-index+1);
+                topScores.addView(top4);
+        }
+    }
+
+    public static LinearLayout createScoreLayout(int rank){
+        LinearLayout top = new LinearLayout(contextSpeedRunActivity);
+        top.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        top.setOrientation(LinearLayout.HORIZONTAL);
+        top.setGravity(Gravity.CENTER_HORIZONTAL);
+        TextView txt = new TextView(contextSpeedRunActivity);
+        txt.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        txt.setText(rank + ". ");
+        txt.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        txt.setGravity(Gravity.CENTER_HORIZONTAL);
+        top.addView(txt);
+        EditText name = new EditText(contextSpeedRunActivity);
+        name.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        name.setHint("Name");
+        name.setId(nameId);
+        name.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+        name.setMaxLines(1);
+        name.setGravity(Gravity.CENTER_HORIZONTAL);
+        InputFilter[] fltr = new InputFilter[1];
+        fltr[0] = new InputFilter.LengthFilter(10);
+        name.setFilters(fltr);
+        top.addView(name);
+        TextView txt2 = new TextView(contextSpeedRunActivity);
+        txt2.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        txt2.setText(" - " + numberPuzzle + " puzzles");
+        txt2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        txt2.setGravity(Gravity.CENTER_HORIZONTAL);
+        top.addView(txt2);
+        return top;
+    }
+
 
     //********* CREATION OF THE PUZZLE ******
 

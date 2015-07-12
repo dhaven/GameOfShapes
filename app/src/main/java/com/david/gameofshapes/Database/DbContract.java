@@ -80,7 +80,7 @@ public class DbContract {
             String name;
             int score;
             ArrayList<Highscore> highscores = new ArrayList<Highscore>();
-            Cursor cursor = db.query(TABNAME,COLUMN_NAMES,null,null,null,null,COLUMN_NAME_SCORE + " DESC");
+            Cursor cursor = db.query(TABNAME,COLUMN_NAMES,null,null,null,null,COLUMN_NAME_SCORE + " ASC");
             cursor.moveToFirst();
             for(int i=0; i<n && !cursor.isAfterLast(); i++) {
                 name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_NAME));

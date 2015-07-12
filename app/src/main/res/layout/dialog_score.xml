@@ -12,83 +12,28 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/imageView2"
+            android:id="@+id/scoreImg"
             android:src="@drawable/new_highscore"
             android:layout_gravity="center"
             android:layout_weight="1" />
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="your name :"
-            android:id="@+id/textView4"
-            android:textColor="#ff000000"
-            android:textSize="20sp" />
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:id="@+id/newName"
-            android:maxLength="10"
-            android:hint="Name" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:id="@+id/topScores">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Top scores :"
             android:textColor="#ff000000"
-            android:textSize="20sp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1. 0 puzzles"
-            android:textColor="#ff000000"
             android:textSize="20sp"
-            android:id="@+id/top1" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="2. 0 puzzles"
-            android:textColor="#ff000000"
-            android:textSize="20sp"
-            android:id="@+id/top2" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="3. 0 puzzles"
-            android:textColor="#ff000000"
-            android:textSize="20sp"
-            android:id="@+id/top3" />
+            android:layout_gravity="center_horizontal" />
 
     </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Score"
-        android:id="@+id/scoreText"
-        android:textColor="#ff000000"
-        android:textSize="20sp"
-        android:layout_gravity="center" />
 
     <RelativeLayout
         android:orientation="horizontal"
