@@ -23,6 +23,9 @@ public class Puzzle {
         this.size = size;
         this.solved = solved;
     }
+    public Puzzle(String config){
+        this.config = config;
+    }
 
     public int getPuzzle_id(){
         return this.puzzle_id;

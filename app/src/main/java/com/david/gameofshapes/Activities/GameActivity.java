@@ -72,10 +72,10 @@ public class GameActivity extends Activity implements View.OnClickListener {
             next.setVisibility(View.INVISIBLE);
         }
 
-        buildSpecificTable(listImages, rows, PuzzleSelectionActivity.puzzleList.get(puzzleId));
+        buildSpecificTable(contextGameActivity,listImages, rows, PuzzleSelectionActivity.puzzleList.get(puzzleId),tableLayout);
         //buildSolvableTable(listImages,rows,4);
 
-        copyImage(listImages, resetImages);
+        copyImage(contextGameActivity,listImages, resetImages);
 
         onAppearanceAnimations(allAnimations);
         resetGameVariables();
@@ -107,27 +107,27 @@ public class GameActivity extends Activity implements View.OnClickListener {
 
                                     //********* CREATION OF THE PUZZLE ******
 
-    public static void buildSpecificTable(ShapeImage[][] listImages, TableRow[] rows, Puzzle puzzle){
+    public static void buildSpecificTable(Context ctx,ShapeImage[][] listImages, TableRow[] rows, Puzzle puzzle, TableLayout table){
         String[] labels = puzzle.getConfig().split(",");
         //Toast.makeText(this,labels.toString(), Toast.LENGTH_LONG).show();
         int level = 0;
         for(int i = 0; i < listImages.length;i++) {
-            rows[i] = new TableRow(contextGameActivity);
+            rows[i] = new TableRow(ctx);
             rows[i].setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
             for (int j = 0; j < listImages[0].length; j++) {
                 if(labels[j + level].equals("T")){
-                    listImages[i][j] = new ShapeImage(contextGameActivity,"triangle");
+                    listImages[i][j] = new ShapeImage(ctx,"triangle");
                     rows[i].addView(listImages[i][j].getImage());
                 }else if(labels[j + level].equals("C")){
-                    listImages[i][j] = new ShapeImage(contextGameActivity,"square");
+                    listImages[i][j] = new ShapeImage(ctx,"square");
                     rows[i].addView(listImages[i][j].getImage());
                 }else{
-                    listImages[i][j] = new ShapeImage(contextGameActivity,"penta");
+                    listImages[i][j] = new ShapeImage(ctx,"penta");
                     rows[i].addView(listImages[i][j].getImage());
                 }
             }
-            tableLayout.addView(rows[i]);
-            level+=4;
+            table.addView(rows[i]);
+            level+=listImages.length;
         }
         setAdjacency(listImages);
     }
@@ -371,9 +371,9 @@ public class GameActivity extends Activity implements View.OnClickListener {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        buildSpecificTable(listImages, rows, PuzzleSelectionActivity.puzzleList.get(puzzleId));
+                        buildSpecificTable(contextGameActivity, listImages, rows, PuzzleSelectionActivity.puzzleList.get(puzzleId),tableLayout);
                         onAppearanceAnimations(allAnimations);
-                        copyImage(listImages, resetImages);
+                        copyImage(contextGameActivity,listImages, resetImages);
                         resetGameVariables();
                         viewCounterMoves.setText("" + ShapeImage.getCounter());
                         onAppearanceAnimations(allAnimations);
@@ -436,7 +436,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
 
     //Procedure when reseting the game
     public static void resetProc(){
-        copyImage(resetImages,listImages);
+        copyImage(contextGameActivity,resetImages,listImages);
         for(int i = 0; i < rows.length; i++){
             rows[i].removeAllViews();
         }
@@ -476,10 +476,10 @@ public class GameActivity extends Activity implements View.OnClickListener {
         return n;
     }
 
-    public static void copyImage(ShapeImage[][] in, ShapeImage[][] out){
+    public static void copyImage(Context ctx, ShapeImage[][] in, ShapeImage[][] out){
         for(int i = 0; i < in.length; i++){
             for(int j = 0; j < in[0].length; j++){
-                out[i][j] = new ShapeImage(contextGameActivity,in[i][j].imgToString(in[i][j].getImage()));
+                out[i][j] = new ShapeImage(ctx,in[i][j].imgToString(in[i][j].getImage()));
             }
         }
         setAdjacency(out);

@@ -50,4 +50,14 @@
         android:layout_marginBottom="89dp"
         android:onClick="resetHighscores" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="tuto"
+        android:id="@+id/button4"
+        android:layout_above="@+id/button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="24dp"
+        android:onClick="goToTuto" />
+
 </RelativeLayout>

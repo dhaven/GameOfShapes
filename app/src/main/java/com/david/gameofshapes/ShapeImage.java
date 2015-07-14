@@ -15,6 +15,7 @@ import android.widget.TableRow;
 import com.david.gameofshapes.Activities.GameActivity;
 import com.david.gameofshapes.Activities.PuzzleSelectionActivity;
 import com.david.gameofshapes.Activities.SpeedRunActivity;
+import com.david.gameofshapes.Activities.TutorialActivity;
 import com.david.gameofshapes.Animations.DisplayNextView;
 import com.david.gameofshapes.Animations.Flip3dAnimation;
 import com.david.gameofshapes.Database.DbContract;
@@ -67,14 +68,17 @@ public class ShapeImage {
             if(left != null){
                 left.startAnimation(getRotation(0,-90,(Integer)left.getTag(), getNextTag(left),left));
             }
-
-            //update the counter moves
-            if(SpeedRunActivity.isSpeedRun == false) {
-                updateMoves();
+            if(!TutorialActivity.isTutorial){
+                //update the counter moves
+                if(SpeedRunActivity.isSpeedRun == false) {
+                    updateMoves();
+                }
+                //verify if the player hasn't lost
+                hasWin();
+                hasLost();
+            }else{
+                TutorialActivity.clickCountTuto2++;
             }
-            //verify if the player hasn't lost
-            hasWin();
-            hasLost();
 
 
         }

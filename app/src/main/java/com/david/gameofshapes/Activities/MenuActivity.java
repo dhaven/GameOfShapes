@@ -74,7 +74,12 @@ public class MenuActivity extends Activity{
     public void resetHighscores(View view){
         ShapesDbHelper myDbHelper = new ShapesDbHelper(getApplicationContext());
         SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
-        myDbHelper.onUpgrade(myDb,1,2);
+        myDbHelper.onUpgrade(myDb, 1, 2);
+    }
+
+    public void goToTuto(View view){
+        Intent intent = new Intent(this,TutorialActivity.class);
+        startActivity(intent);
     }
 
     private class LoadDataTask extends AsyncTask<String,Void,ArrayList<Puzzle>> {

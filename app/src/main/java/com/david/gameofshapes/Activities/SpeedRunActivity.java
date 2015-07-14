@@ -71,7 +71,7 @@ public class SpeedRunActivity extends Activity{
     public static boolean isSpeedRun = false;
     public static TextView timerView;
     public static Timer timer;
-    public static long timeLimit = 10000; //60 seconds
+    public static long timeLimit = 60000; //60 seconds
     public static ImageView countDown;
     public static boolean first;
     public static int nameId;
@@ -107,7 +107,7 @@ public class SpeedRunActivity extends Activity{
         AsyncTask<Void,Void,Void> writeTask = new NewPuzzleTask();
         writeTask.execute();
 
-        new LoadHighscores().execute(3);
+        new LoadHighscores().execute(10);
     }
 
     @Override
