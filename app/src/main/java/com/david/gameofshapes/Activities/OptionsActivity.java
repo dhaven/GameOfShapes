@@ -48,7 +48,8 @@ public class OptionsActivity extends Activity{
     }
 
     public void showTutorial(View view){
-
+        Intent intent = new Intent(this,TutorialActivity.class);
+        startActivity(intent);
     }
 
     public void chooseMusic(View view){
