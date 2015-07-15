@@ -12,5 +12,6 @@
     <string name="tuto_message_2">The main concept is that shapes shift in a cycle. This shifting occurs when you touch a shape.</string>
     <string name="tuto_message_3">Another important aspect is that when you touch a shape all adjacent shapes will also shift according to the cycle.</string>
     <string name="tuto_message_4">Try solving this puzzle by shifting shapes until their all become pentagones.</string>
+    <string name="title_activity_options">Options</string>
 
 </resources>

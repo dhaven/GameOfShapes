@@ -71,14 +71,14 @@ public class MenuActivity extends Activity{
         startActivity(intent);
     }
 
-    public void resetHighscores(View view){
-        ShapesDbHelper myDbHelper = new ShapesDbHelper(getApplicationContext());
-        SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
-        myDbHelper.onUpgrade(myDb, 1, 2);
-    }
 
     public void goToTuto(View view){
         Intent intent = new Intent(this,TutorialActivity.class);
+        startActivity(intent);
+    }
+
+    public void goToOptions(View view){
+        Intent intent = new Intent(this, OptionsActivity.class);
         startActivity(intent);
     }
 

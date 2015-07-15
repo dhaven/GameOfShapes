@@ -27,8 +27,8 @@
         <activity
             android:name=".Activities.PuzzleSelectionActivity"
             android:label="Puzzle selection"
-            android:screenOrientation="portrait"
             android:parentActivityName=".Activities.MenuActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme2" >
         </activity>
         <activity
@@ -41,8 +41,15 @@
         </activity>
         <activity
             android:name=".Activities.TutorialActivity"
-            android:theme="@style/AppTheme3"
-            android:label="@string/title_activity_tutorial" >
+            android:label="@string/title_activity_tutorial"
+            android:theme="@style/AppTheme3" >
+        </activity>
+        <activity
+            android:name=".Activities.OptionsActivity"
+            android:label="@string/title_activity_options"
+            android:parentActivityName=".Activities.MenuActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme2">
         </activity>
     </application>
 
