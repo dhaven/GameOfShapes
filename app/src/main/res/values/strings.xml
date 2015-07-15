@@ -9,9 +9,11 @@
     <string name="title_activity_puzzle_selection">PuzzleSelectionActivity</string>
     <string name="title_activity_speed_run">SpeedRunActivity</string>
     <string name="title_activity_tutorial">TutorialActivity</string>
+    <string name="tuto_message_1">thanks for choosing to play Game Of Shapes! This short tutorial will explain to you how the game works. At anytime you can use a swipe motion to naviguate across the tutorial.</string>
     <string name="tuto_message_2">The main concept is that shapes shift in a cycle. This shifting occurs when you touch a shape.</string>
     <string name="tuto_message_3">Another important aspect is that when you touch a shape all adjacent shapes will also shift according to the cycle.</string>
     <string name="tuto_message_4">Try solving this puzzle by shifting shapes until their all become pentagones.</string>
+    <string name="tuto_message_5">The tutorial is completed! You can do it again at anytime through the options menu.</string>
     <string name="title_activity_options">Options</string>
 
 </resources>

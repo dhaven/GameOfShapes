@@ -279,7 +279,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         final AlertDialog dlg2 = dlg;
         dlg.setCanceledOnTouchOutside(false);
         dlg.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        dlg.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
+        dlg.getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
         Button nextPzl = (Button) v.findViewById(R.id.nextpzl);
         nextPzl.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -406,7 +406,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         final AlertDialog dlg2 = dlg;
         dlg.setCanceledOnTouchOutside(false);
         dlg.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        dlg.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
+        dlg.getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
         Button retry = (Button) v.findViewById(R.id.retry);
         Button quit = (Button) v.findViewById(R.id.quit);
         retry.setOnClickListener(new View.OnClickListener() {

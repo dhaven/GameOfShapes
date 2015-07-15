@@ -68,16 +68,21 @@ public class ShapeImage {
             if(left != null){
                 left.startAnimation(getRotation(0,-90,(Integer)left.getTag(), getNextTag(left),left));
             }
-            if(!TutorialActivity.isTutorial){
+            if(TutorialActivity.isTutorial2){
+                TutorialActivity.clickCountTuto2++;
+            }else if(TutorialActivity.isTutorial3){
+                TutorialActivity.clickCountTuto3++;
+            }else if(TutorialActivity.isTutorial4){
+
+            }
+            else{
                 //update the counter moves
                 if(SpeedRunActivity.isSpeedRun == false) {
                     updateMoves();
                 }
                 //verify if the player hasn't lost
                 hasWin();
-                hasLost();
-            }else{
-                TutorialActivity.clickCountTuto2++;
+                hasLost();;
             }
 
 

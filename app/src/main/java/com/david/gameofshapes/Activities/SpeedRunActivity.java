@@ -294,7 +294,7 @@ public class SpeedRunActivity extends Activity{
         final AlertDialog dlg2 = dlg;
         dlg.setCanceledOnTouchOutside(false);
         dlg.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        dlg.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
+        dlg.getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
 
         int ret = Collections.binarySearch(highscores, new Highscore("", numberPuzzle));
         int index = Math.abs(ret + 1);
