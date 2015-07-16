@@ -15,5 +15,6 @@
     <string name="tuto_message_4">Try solving this puzzle by shifting shapes until their all become pentagones.</string>
     <string name="tuto_message_5">The tutorial is completed! You can do it again at anytime through the options menu.</string>
     <string name="title_activity_options">Options</string>
+    <string name="title_activity_launch">LaunchActivity</string>
 
 </resources>

@@ -2,9 +2,11 @@ package com.david.gameofshapes.Activities;
 
 import android.app.Activity;
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -41,6 +43,13 @@ public class OptionsActivity extends Activity{
         SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
         myDbHelper.onUpgrade(myDb,1,2);
         PuzzleSelectionActivity.puzzleList = DbContract.PuzzlesTable.getAllPuzzles(myDb);
+
+        //reset launch tutorial
+
+        SharedPreferences sharedPref = getSharedPreferences("TutoCompleted", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.clear();
+        editor.commit();
     }
 
     public void showScores(View view){
@@ -50,6 +59,7 @@ public class OptionsActivity extends Activity{
     public void showTutorial(View view){
         Intent intent = new Intent(this,TutorialActivity.class);
         startActivity(intent);
+        finish();
     }
 
     public void chooseMusic(View view){

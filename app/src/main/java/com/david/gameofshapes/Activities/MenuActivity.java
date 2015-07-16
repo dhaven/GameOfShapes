@@ -71,15 +71,17 @@ public class MenuActivity extends Activity{
         startActivity(intent);
     }
 
-
-    public void goToTuto(View view){
-        Intent intent = new Intent(this,TutorialActivity.class);
-        startActivity(intent);
-    }
-
     public void goToOptions(View view){
         Intent intent = new Intent(this, OptionsActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
     }
 
     private class LoadDataTask extends AsyncTask<String,Void,ArrayList<Puzzle>> {
@@ -95,14 +97,5 @@ public class MenuActivity extends Activity{
         protected void onPostExecute(ArrayList<Puzzle> result) {
             PuzzleSelectionActivity.puzzleList = result;
         }
-    }
-
-    public void onClick(View view){ //old
-        Button thisButton = (Button) view;
-        Intent intent = new Intent(this,GameActivity.class);
-        String difficulty = thisButton.getText().toString();
-        //Toast.makeText(this,menulayout, Toast.LENGTH_SHORT).show();
-        //intent.putExtra("menulayout",menulayout);
-        startActivity(intent);
     }
 }

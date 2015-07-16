@@ -8,7 +8,11 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/tuto_message_4"
-        android:id="@+id/textView6" />
+        android:id="@+id/textView6"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="15dp"
+        android:layout_gravity="center_horizontal" />
     <TableLayout
         android:animateLayoutChanges="true"
         android:layout_width="wrap_content"
@@ -24,5 +28,6 @@
         android:id="@+id/retry_puzzle_tuto"
         android:layout_gravity="center_horizontal"
         android:onClick="reset"
-        android:src="@drawable/reload" />
+        android:src="@drawable/reload"
+        android:layout_marginTop="10dp" />
 </LinearLayout>

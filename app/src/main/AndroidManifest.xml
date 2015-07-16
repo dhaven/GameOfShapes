@@ -18,11 +18,6 @@
             android:label="Game Of Shapes"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".Activities.PuzzleSelectionActivity"
@@ -41,7 +36,8 @@
         </activity>
         <activity
             android:name=".Activities.TutorialActivity"
-            android:label="@string/title_activity_tutorial"
+            android:label="Game Of Shapes"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme3" >
         </activity>
         <activity
@@ -49,7 +45,17 @@
             android:label="@string/title_activity_options"
             android:parentActivityName=".Activities.MenuActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme2">
+            android:theme="@style/AppTheme2" >
+        </activity>
+        <activity
+            android:name=".Activities.LaunchActivity"
+            android:theme="@style/AppTheme3"
+            android:label="Game Of Shapes" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

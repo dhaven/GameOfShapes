@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
@@ -179,7 +181,14 @@ public class TutorialActivity extends Activity implements SimpleGestureFilter.Si
             public void onClick(View v) {
                 dlg2.dismiss();
                 isTutorial4 = false;
-                ((Activity) contextTutoActivity).onBackPressed();
+                isRunning = false;
+                SharedPreferences sharedPref = contextTutoActivity.getSharedPreferences("TutoCompleted", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("isCompleted","true");
+                editor.commit();
+                Intent intent = new Intent(contextTutoActivity, MenuActivity.class);
+                contextTutoActivity.startActivity(intent);
+                ((Activity) contextTutoActivity).finish();
             }
         });
         return dlg;
