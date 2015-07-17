@@ -43,10 +43,6 @@ public class OptionsActivity extends Activity{
     }
 
     public void resetGame(View view){
-        resetHighScores();
-    }
-
-    public void resetHighScores(){
         ShapesDbHelper myDbHelper = new ShapesDbHelper(getApplicationContext());
         SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
         myDbHelper.onUpgrade(myDb,1,2);
