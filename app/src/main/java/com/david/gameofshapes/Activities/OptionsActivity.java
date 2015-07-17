@@ -104,7 +104,40 @@ public class OptionsActivity extends Activity{
     }
 
     public void chooseMusic(View view){
+        //Get list of music (to change)
+        String[] listMusic = {"Music 1", "Music 2", "Music 3", "Music 4"};
 
+        //Show dialog
+        musicDialog(listMusic).show();
+
+
+    }
+
+    public AlertDialog musicDialog( String[] listMusic){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_options_music, null);
+        builder.setView(view);
+        builder.setTitle("Musics");
+
+        //Add a textview for each music
+        LinearLayout linearLayout = (LinearLayout) view;
+        for(int i = 0; i < listMusic.length; i++){
+            TextView textView = new TextView(view.getContext());
+            textView.setText(listMusic[i]);
+            textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO music = listMusic[1]
+                }
+            });
+
+           linearLayout.addView(textView);
+        }
+
+        return builder.create();
     }
 
     public void showPuzzlesSolved(View view){
