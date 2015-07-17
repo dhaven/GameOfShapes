@@ -30,6 +30,7 @@ import com.david.gameofshapes.Puzzle;
 import com.david.gameofshapes.R;
 
 import java.util.ArrayList;
+import java.util.zip.Inflater;
 
 
 public class OptionsActivity extends Activity{
@@ -104,6 +105,77 @@ public class OptionsActivity extends Activity{
 
     public void chooseMusic(View view){
 
+    }
+
+    public void showPuzzlesSolved(View view){
+        //Get all puzzles
+        ShapesDbHelper myDbHelper = new ShapesDbHelper(getApplicationContext());
+        SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
+        ArrayList<Puzzle> allPuzzles =  DbContract.PuzzlesTable.getAllPuzzles(myDb);
+
+        //Get the number of puzzles solved by difficulty
+
+        int easyPuzzles = 0;    //total number of easy puzzles
+        int easyPuzzlesSolved = 0;  //number of easy puzzles solved
+        int mediumPuzzles = 0;
+        int mediumPuzzlesSolved = 0;
+        int hardPuzzles = 0;
+        int hardPuzzlesSolved = 0;
+
+        for(int i = 0; i < allPuzzles.size(); i++){
+            Puzzle puzzle = allPuzzles.get(i);
+
+            if(puzzle.getDifficulty() == "easy"){
+                easyPuzzles++;
+                if (puzzle.getSolved() == 1){
+                    easyPuzzlesSolved++;
+                }
+            }
+            else if(puzzle.getDifficulty() == "medium"){
+                mediumPuzzles++;
+                if (puzzle.getSolved() == 1){
+                    mediumPuzzlesSolved++;
+                }
+            }
+            else{
+                hardPuzzles++;
+                if(puzzle.getSolved() == 1){
+                    hardPuzzlesSolved++;
+                }
+            }
+        }
+
+        //Show dialog
+        puzzlesSolvedDialog(easyPuzzles, easyPuzzlesSolved, mediumPuzzles, mediumPuzzlesSolved, hardPuzzles, hardPuzzlesSolved).show();
+    }
+
+    public AlertDialog puzzlesSolvedDialog(int e, int eS, int m, int mS, int h, int hS){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_options_puzzles_solved, null);
+        builder.setView(view);
+        builder.setTitle("Puzzles Solved");
+
+        TextView textView1 = (TextView) view.findViewById(R.id.easyPuzzles);
+        textView1.setText( eS + " / " + e);
+
+        TextView textView2 = (TextView) view.findViewById(R.id.easyPuzzlesSolved);
+        textView2.setText("Easy puzzles solved : ");
+
+        TextView textView3 = (TextView) view.findViewById(R.id.mediumPuzzles);
+        textView3.setText( mS + " / " + m);
+
+        TextView textView4 = (TextView) view.findViewById(R.id.mediumPuzzlesSolved);
+        textView4.setText("Medium puzzles solved : ");
+
+        TextView textView5 = (TextView) view.findViewById(R.id.hardPuzzles);
+        textView5.setText(hS + " / " + h);
+
+        TextView textView6 = (TextView) view.findViewById(R.id.hardPuzzlesSolved);
+        textView6.setText("Hard puzzles solved : ");
+
+        return builder.create();
     }
 
 }

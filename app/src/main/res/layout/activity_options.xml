@@ -28,4 +28,10 @@
         android:text="Music"
         android:onClick="chooseMusic"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Puzzles Solved"
+        android:onClick="showPuzzlesSolved"/>
+
 </LinearLayout>
