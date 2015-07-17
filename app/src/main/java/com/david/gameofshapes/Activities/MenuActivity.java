@@ -60,12 +60,7 @@ public class MenuActivity extends Activity{
         Intent intent = new Intent(this,PuzzleSelectionActivity.class);
         startActivity(intent);
     }
-    public void goToStats(View view){
-        /*
-        Todo
-        send players to an ativity that presents various stats
-         */
-    }
+
     public void goToSpeedrun(View view){
         Intent intent = new Intent(this, SpeedRunActivity.class);
         startActivity(intent);

@@ -40,10 +40,10 @@
     <Button
         android:layout_width="150dp"
         android:layout_height="60dp"
-        android:text="STATS"
+        android:text="OPTIONS"
         android:textSize="25sp"
         android:id="@+id/button3"
-        android:onClick="goToStats"
+        android:onClick="goToOptions"
         android:background="@drawable/level"
         android:layout_marginTop="37dp"
         android:layout_below="@+id/button2"
