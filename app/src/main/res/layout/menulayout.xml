@@ -4,15 +4,6 @@
     tools:context="com.david.gameofshapes.Activities.MenuActivity"
     android:background="@drawable/back_temp">
 
-    <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:src="@drawable/settings"
-        android:id="@+id/goToOpions"
-        android:onClick="goToOptions"/>
-
     <Button
         android:layout_width="200dp"
         android:layout_height="60dp"
