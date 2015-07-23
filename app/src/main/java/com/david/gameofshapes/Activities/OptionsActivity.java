@@ -52,42 +52,6 @@ public class OptionsActivity extends Activity{
 
     }
 
-    public void reset(View view){
-        //build a dialog prompting the user if he's sure that he wants to erase his records
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setPositiveButton("Reset", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                resetGame();
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-
-        builder.setTitle("Reset game").setMessage("Are you sure ?");
-
-        builder.create().show();
-
-    }
-
-    public void resetGame(){
-        ShapesDbHelper myDbHelper = new ShapesDbHelper(getApplicationContext());
-        SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
-        myDbHelper.onUpgrade(myDb,1,2);
-        PuzzleSelectionActivity.puzzleList = DbContract.PuzzlesTable.getAllPuzzles(myDb);
-
-        //reset launch tutorial
-
-        SharedPreferences sharedPref = getSharedPreferences("TutoCompleted", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.clear();
-        editor.commit();
-    }
-
     public void showScores(){
         //Get the top 10 scores
         ShapesDbHelper myDbHelper = new ShapesDbHelper(getApplicationContext());
@@ -128,48 +92,6 @@ public class OptionsActivity extends Activity{
 
         ExpandableListView listView = (ExpandableListView) findViewById(R.id.highscores_list);
         listView.setAdapter(listAdapter);
-    }
-
-
-    public void showTutorial(View view){
-        Intent intent = new Intent(this,TutorialActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    public void chooseMusic(View view){
-        //Get list of music (to change)
-        String[] listMusic = {"Music 1", "Music 2", "Music 3", "Music 4"};
-
-        //Show dialog
-        musicDialog(listMusic).show();
-    }
-
-    public AlertDialog musicDialog( String[] listMusic){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        LayoutInflater inflater = this.getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_options_music, null);
-        builder.setView(view);
-        builder.setTitle("Musics");
-
-        //Add a textview for each music
-        LinearLayout linearLayout = (LinearLayout) view;
-        for(int i = 0; i < listMusic.length; i++){
-            TextView textView = new TextView(view.getContext());
-            textView.setText(listMusic[i]);
-            textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //TODO music = listMusic[1]
-                }
-            });
-
-           linearLayout.addView(textView);
-        }
-
-        return builder.create();
     }
 
     public void showPuzzlesSolved(){
@@ -247,5 +169,83 @@ public class OptionsActivity extends Activity{
         ExpandableListView listView = (ExpandableListView) findViewById(R.id.puzzles_solved_list);
         listView.setAdapter(listAdapter);
     }
+
+    public void chooseMusic(View view){
+        //Get list of music (to change)
+        String[] listMusic = {"Music 1", "Music 2", "Music 3", "Music 4"};
+
+        //Show dialog
+        musicDialog(listMusic).show();
+    }
+
+    public AlertDialog musicDialog( String[] listMusic){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_options_music, null);
+        builder.setView(view);
+        builder.setTitle("Musics");
+
+        //Add a textview for each music
+        LinearLayout linearLayout = (LinearLayout) view;
+        for(int i = 0; i < listMusic.length; i++){
+            TextView textView = new TextView(view.getContext());
+            textView.setText(listMusic[i]);
+            textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO music = listMusic[1]
+                }
+            });
+
+            linearLayout.addView(textView);
+        }
+
+        return builder.create();
+    }
+
+    public void showTutorial(View view){
+        Intent intent = new Intent(this,TutorialActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    public void reset(View view){
+        //build a dialog prompting the user if he's sure that he wants to erase his records
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setPositiveButton("Reset", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                resetGame();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        builder.setTitle("Reset game").setMessage("Are you sure ?");
+
+        builder.create().show();
+
+    }
+
+    public void resetGame(){
+        ShapesDbHelper myDbHelper = new ShapesDbHelper(getApplicationContext());
+        SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
+        myDbHelper.onUpgrade(myDb,1,2);
+        PuzzleSelectionActivity.puzzleList = DbContract.PuzzlesTable.getAllPuzzles(myDb);
+
+        //reset launch tutorial
+
+        SharedPreferences sharedPref = getSharedPreferences("TutoCompleted", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.clear();
+        editor.commit();
+    }
+
 
 }
