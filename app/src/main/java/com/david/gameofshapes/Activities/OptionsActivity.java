@@ -47,6 +47,7 @@ public class OptionsActivity extends Activity{
         setContentView(R.layout.activity_options);
 
         showScores();
+        showPuzzlesSolved();
 
     }
 
@@ -148,7 +149,7 @@ public class OptionsActivity extends Activity{
         return builder.create();
     }
 
-    public void showPuzzlesSolved(View view){
+    public void showPuzzlesSolved(){
         //Get all puzzles
         ShapesDbHelper myDbHelper = new ShapesDbHelper(getApplicationContext());
         SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
@@ -187,36 +188,41 @@ public class OptionsActivity extends Activity{
         }
 
         //Show dialog
-        puzzlesSolvedDialog(easyPuzzles, easyPuzzlesSolved, mediumPuzzles, mediumPuzzlesSolved, hardPuzzles, hardPuzzlesSolved).show();
+        puzzlesSolvedList(easyPuzzles, easyPuzzlesSolved, mediumPuzzles, mediumPuzzlesSolved, hardPuzzles, hardPuzzlesSolved);
     }
 
-    public AlertDialog puzzlesSolvedDialog(int e, int eS, int m, int mS, int h, int hS){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    public void puzzlesSolvedList(final int e, final int eS, final int m, final int mS, final int h, final int hS){
 
-        LayoutInflater inflater = this.getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_options_puzzles_solved, null);
-        builder.setView(view);
-        builder.setTitle("Puzzles Solved");
 
-        TextView textView1 = (TextView) view.findViewById(R.id.easyPuzzles);
-        textView1.setText( eS + " / " + e);
+        List<Map<String, String>> groupData = new ArrayList<Map<String, String>>(){{
+            add(new HashMap<String, String>(){{
+                put("ROOT_NAME", "Puzzles Solved");
+            }});
+        }};
 
-        TextView textView2 = (TextView) view.findViewById(R.id.easyPuzzlesSolved);
-        textView2.setText("Easy puzzles solved : ");
+        List<List<Map<String, String>>> listOfChildGroups = new ArrayList<List<Map<String, String>>>();
 
-        TextView textView3 = (TextView) view.findViewById(R.id.mediumPuzzles);
-        textView3.setText( mS + " / " + m);
+        List<Map<String, String>> childGroupForFirstGroupRow = new ArrayList<Map<String, String>>(){{
+                add(new HashMap<String, String>() {{
+                    put("CHILD_NAME", "Easy puzzles solved : " + eS + " / " + e);
+                }});
+                add(new HashMap<String, String>() {{
+                    put("CHILD_NAME", "Medium puzzles solved : " +  mS + " / " + m);
+                }});
+                add(new HashMap<String, String>() {{
+                    put("CHILD_NAME", "Hard puzzles solved : " + hS + " / " + h);
+                }});
+        }};
+        listOfChildGroups.add(childGroupForFirstGroupRow);
 
-        TextView textView4 = (TextView) view.findViewById(R.id.mediumPuzzlesSolved);
-        textView4.setText("Medium puzzles solved : ");
+        SimpleExpandableListAdapter listAdapter = new SimpleExpandableListAdapter(this, groupData, android.R.layout.simple_expandable_list_item_1, new String[] {"ROOT_NAME"},
+                new int[] { android.R.id.text1 }, listOfChildGroups,
+                android.R.layout.simple_expandable_list_item_1,
+                new String[] { "CHILD_NAME"},
+                new int[] { android.R.id.text1});
 
-        TextView textView5 = (TextView) view.findViewById(R.id.hardPuzzles);
-        textView5.setText(hS + " / " + h);
-
-        TextView textView6 = (TextView) view.findViewById(R.id.hardPuzzlesSolved);
-        textView6.setText("Hard puzzles solved : ");
-
-        return builder.create();
+        ExpandableListView listView = (ExpandableListView) findViewById(R.id.puzzles_solved_list);
+        listView.setAdapter(listAdapter);
     }
 
 }
