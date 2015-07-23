@@ -19,10 +19,13 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.SimpleExpandableListAdapter;
+import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -49,6 +52,7 @@ public class OptionsActivity extends Activity{
 
         showScores();
         showPuzzlesSolved();
+        chooseMusic();
 
     }
 
@@ -58,8 +62,6 @@ public class OptionsActivity extends Activity{
         SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
         ArrayList<Highscore> highscores =  DbContract.HighscoresTable.getTopN(myDb, 10);
 
-        //Show dialog with the scores
-        //scoresDialog(highscores).show();
         scoresList(highscores);
 
     }
@@ -170,39 +172,30 @@ public class OptionsActivity extends Activity{
         listView.setAdapter(listAdapter);
     }
 
-    public void chooseMusic(View view){
+    public void chooseMusic(){
         //Get list of music (to change)
         String[] listMusic = {"Music 1", "Music 2", "Music 3", "Music 4"};
 
-        //Show dialog
-        musicDialog(listMusic).show();
+        musicList(listMusic);
     }
 
-    public AlertDialog musicDialog( String[] listMusic){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    public void musicList( String[] listMusic){
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, listMusic);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        LayoutInflater inflater = this.getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_options_music, null);
-        builder.setView(view);
-        builder.setTitle("Musics");
+        Spinner spinner = (Spinner) findViewById(R.id.music_spinner);
+        spinner.setAdapter(arrayAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //TODO switch current music to the selected one
+            }
 
-        //Add a textview for each music
-        LinearLayout linearLayout = (LinearLayout) view;
-        for(int i = 0; i < listMusic.length; i++){
-            TextView textView = new TextView(view.getContext());
-            textView.setText(listMusic[i]);
-            textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //TODO music = listMusic[1]
-                }
-            });
-
-            linearLayout.addView(textView);
-        }
-
-        return builder.create();
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                //nothing to do
+            }
+        });
     }
 
     public void showTutorial(View view){
