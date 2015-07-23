@@ -4,17 +4,22 @@
     tools:context="com.david.gameofshapes.Activities.OptionsActivity"
     android:orientation="vertical">
 
+    <ExpandableListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/highscores_list">
+    </ExpandableListView>
+
+    <ExpandableListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/puzzles_solved_list"></ExpandableListView>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Reset"
         android:onClick="resetGame"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Highscores"
-        android:onClick="showScores"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -33,5 +38,7 @@
         android:layout_height="wrap_content"
         android:text="Puzzles Solved"
         android:onClick="showPuzzlesSolved"/>
+
+
 
 </LinearLayout>

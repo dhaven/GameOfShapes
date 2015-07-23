@@ -19,7 +19,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
+import android.widget.SimpleExpandableListAdapter;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -30,6 +32,9 @@ import com.david.gameofshapes.Puzzle;
 import com.david.gameofshapes.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.Inflater;
 
 
@@ -40,6 +45,8 @@ public class OptionsActivity extends Activity{
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_options);
+
+        showScores();
 
     }
 
@@ -57,45 +64,48 @@ public class OptionsActivity extends Activity{
         editor.commit();
     }
 
-    public void showScores(View view){
+    public void showScores(){
         //Get the top 10 scores
         ShapesDbHelper myDbHelper = new ShapesDbHelper(getApplicationContext());
         SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
         ArrayList<Highscore> highscores =  DbContract.HighscoresTable.getTopN(myDb, 10);
 
         //Show dialog with the scores
-        scoresDialog(highscores).show();
+        //scoresDialog(highscores).show();
+        scoresList(highscores);
 
     }
 
-    public AlertDialog scoresDialog(ArrayList<Highscore> highscores){
-        AlertDialog.Builder  builder = new AlertDialog.Builder(this);
-        builder.setTitle("Top scores");
+    public void scoresList(final ArrayList<Highscore> highscores){
+        List<Map<String, String>> groupData = new ArrayList<Map<String, String>>(){{
+            add(new HashMap<String, String>(){{
+                put("ROOT_NAME", "Highscores");
+            }});
+        }};
 
-        LayoutInflater inflater = this.getLayoutInflater();
+        List<List<Map<String, String>>> listOfChildGroups = new ArrayList<List<Map<String, String>>>();
 
-        View view =  inflater.inflate(R.layout.dialog_options_scores, null);
-        builder.setView(view);
+        List<Map<String, String>> childGroupForFirstGroupRow = new ArrayList<Map<String, String>>(){{
+            for(int i = 0; i < highscores.size(); i++){
+                Highscore score = highscores.get(i);
+                final String string = "" + (i+1) + ". " + score.getName() + " - " + score.getScore();
+                add(new HashMap<String, String>() {{
+                    put("CHILD_NAME", string);
+                }});
+            }
+        }};
+        listOfChildGroups.add(childGroupForFirstGroupRow);
 
-        AlertDialog dialog = builder.create();
+        SimpleExpandableListAdapter listAdapter = new SimpleExpandableListAdapter(this, groupData, android.R.layout.simple_expandable_list_item_1, new String[] {"ROOT_NAME"},
+                new int[] { android.R.id.text1 }, listOfChildGroups,
+                android.R.layout.simple_expandable_list_item_1,
+                new String[] { "CHILD_NAME"},
+                new int[] { android.R.id.text1});
 
-        addScores(view, highscores);
-
-
-        return dialog;
+        ExpandableListView listView = (ExpandableListView) findViewById(R.id.highscores_list);
+        listView.setAdapter(listAdapter);
     }
 
-    public void addScores(View view, ArrayList<Highscore> highscores){
-        TableLayout scoresTable = (TableLayout) view.findViewById(R.id.table_scores);
-
-
-
-        for(int i = 0; i < highscores.size(); i++){
-            Highscore score = highscores.get(i);
-            TextView scoreView = (TextView) scoresTable.getChildAt(i);
-            scoreView.setText( (i+1) + ".  " + score.getName() + " - " + score.getScore());
-        }
-    }
 
     public void showTutorial(View view){
         Intent intent = new Intent(this,TutorialActivity.class);
@@ -109,8 +119,6 @@ public class OptionsActivity extends Activity{
 
         //Show dialog
         musicDialog(listMusic).show();
-
-
     }
 
     public AlertDialog musicDialog( String[] listMusic){
