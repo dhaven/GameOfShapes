@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
@@ -51,7 +52,29 @@ public class OptionsActivity extends Activity{
 
     }
 
-    public void resetGame(View view){
+    public void reset(View view){
+        //build a dialog prompting the user if he's sure that he wants to erase his records
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setPositiveButton("Reset", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                resetGame();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        builder.setTitle("Reset game").setMessage("Are you sure ?");
+
+        builder.create().show();
+
+    }
+
+    public void resetGame(){
         ShapesDbHelper myDbHelper = new ShapesDbHelper(getApplicationContext());
         SQLiteDatabase myDb = myDbHelper.getReadableDatabase();
         myDbHelper.onUpgrade(myDb,1,2);

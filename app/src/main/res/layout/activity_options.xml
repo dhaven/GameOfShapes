@@ -15,22 +15,28 @@
         android:layout_height="wrap_content"
         android:id="@+id/puzzles_solved_list"></ExpandableListView>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Reset"
-        android:onClick="resetGame"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tutorial"
-        android:onClick="showTutorial"/>
+
+
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Music"
         android:onClick="chooseMusic"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Tutorial"
+        android:onClick="showTutorial"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Reset"
+        android:onClick="reset"/>
 
 </LinearLayout>
