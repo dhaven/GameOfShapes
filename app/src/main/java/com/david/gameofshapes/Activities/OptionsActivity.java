@@ -88,9 +88,9 @@ public class OptionsActivity extends Activity{
 
         SimpleExpandableListAdapter listAdapter = new SimpleExpandableListAdapter(this, groupData, android.R.layout.simple_expandable_list_item_1, new String[] {"ROOT_NAME"},
                 new int[] { android.R.id.text1 }, listOfChildGroups,
-                android.R.layout.simple_expandable_list_item_1,
+                R.layout.highscores_list_item,
                 new String[] { "CHILD_NAME"},
-                new int[] { android.R.id.text1});
+                new int[] { R.id.text1});
 
         ExpandableListView listView = (ExpandableListView) findViewById(R.id.highscores_list);
         listView.setAdapter(listAdapter);
@@ -151,22 +151,22 @@ public class OptionsActivity extends Activity{
 
         List<Map<String, String>> childGroupForFirstGroupRow = new ArrayList<Map<String, String>>(){{
                 add(new HashMap<String, String>() {{
-                    put("CHILD_NAME", "Easy puzzles solved : " + eS + " / " + e);
+                    put("CHILD_NAME", "Easy  : " + eS + " / " + e);
                 }});
                 add(new HashMap<String, String>() {{
-                    put("CHILD_NAME", "Medium puzzles solved : " +  mS + " / " + m);
+                    put("CHILD_NAME", "Medium  : " +  mS + " / " + m);
                 }});
                 add(new HashMap<String, String>() {{
-                    put("CHILD_NAME", "Hard puzzles solved : " + hS + " / " + h);
+                    put("CHILD_NAME", "Hard  : " + hS + " / " + h);
                 }});
         }};
         listOfChildGroups.add(childGroupForFirstGroupRow);
 
         SimpleExpandableListAdapter listAdapter = new SimpleExpandableListAdapter(this, groupData, android.R.layout.simple_expandable_list_item_1, new String[] {"ROOT_NAME"},
                 new int[] { android.R.id.text1 }, listOfChildGroups,
-                android.R.layout.simple_expandable_list_item_1,
+                R.layout.puzzles_solved_list_item,
                 new String[] { "CHILD_NAME"},
-                new int[] { android.R.id.text1});
+                new int[] { R.id.text2});
 
         ExpandableListView listView = (ExpandableListView) findViewById(R.id.puzzles_solved_list);
         listView.setAdapter(listAdapter);
